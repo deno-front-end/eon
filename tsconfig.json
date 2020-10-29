@@ -2,6 +2,6 @@
   "compilerOptions": {
     "jsxFactory": "h",
     "jsxFragmentFactory": "hf",
-    "jsx": "preserve"
+    "jsx": "react"
   }
 }
