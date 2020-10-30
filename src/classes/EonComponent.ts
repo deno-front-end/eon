@@ -10,25 +10,25 @@ export interface EonComponentInterface {
   file?: string;
   /** the DOM tree of the component */
   template?: DOMElement;
-  /** component's ViewModel */
-  ViewModel?: EonModule['ViewModel'];
+  /** component's VMC */
+  VMC?: EonModule['VMC'];
 }
 export default class EonComponent implements EonComponentInterface {
   uuid: EonComponentInterface['uuid'];
   name: EonComponentInterface['name'];
   file: EonComponentInterface['file'];
   template: EonComponentInterface['template'];
-  ViewModel: EonComponentInterface['ViewModel'];
+  VMC: EonComponentInterface['VMC'];
   constructor(opts: EonComponentInterface) {
     const {
       file,
       uuid,
       template,
-      ViewModel,
+      VMC,
     } = opts;
     this.file = file;
     this.uuid = uuid;
     this.template = template;
-    this.ViewModel = ViewModel;
+    this.VMC = VMC;
   }
 }

@@ -9,9 +9,9 @@ export interface ModuleGetterOptions {
 }
 export interface EonModule {
   name: string;
-  default?: <T>(vm?: T) => DOMElement;
+  default<T>(vm?: T): DOMElement;
   template?: <T>(vm?: T) => DOMElement;
-  ViewModel: any;
+  VMC: any;
   [k: string]: any;
 }
 export abstract class ModuleGetter {

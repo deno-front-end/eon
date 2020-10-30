@@ -1,5 +1,4 @@
-export const name = "AppHello";
-export default function() {
+export default function AppHello() {
   return (<>
       <template>
         {() => this.message}
@@ -10,7 +9,7 @@ export default function() {
     </>
   )
 }
-export class ViewModel {
+export class VMC {
   message = "Hello World";
   array = [1, 3];
   static props(props) {

@@ -71,6 +71,9 @@ export default class DOMElement implements DOMElementInterface {
   get isFragment(): boolean {
     return this.nodeType === 11 && this.name === undefined && !this.parent;
   }
+  get isComponent(): boolean {
+    return this.nodeType === 1 && typeof this.value === 'object'
+  }
   setParent(parent: DOMTreeElement) {
     this.parent = parent;
   }

@@ -2,6 +2,7 @@ import type { EonModule } from './ModuleGetter.ts';
 import EonComponent from './EonComponent.ts';
 import type { ModuleGetterOptions } from './ModuleGetter.ts';
 import { v4 } from '../../deps.ts';
+import { ModuleErrors } from './ModuleErrors.ts';
 
 export default abstract class ModuleResolver {
   static async resolve(module: EonModule, opts: ModuleGetterOptions) {
@@ -10,14 +11,17 @@ export default abstract class ModuleResolver {
     // for this we use the default export or the export named template
     // we are waiting for a function
     // TODO define what to do if default/template is a string
-    const { template, ViewModel, name } = module;
+    const { template, VMC, name } = module;
     const component = new EonComponent({
       file: entrypoint,
       uuid: v4.generate(),
-      ViewModel,
+      // @ts-ignore
+      name: module.default && module.default.name || name ,
+      VMC,
     });
-    const vm = ViewModel ? new ViewModel() : undefined;
+    const vm = VMC ? new VMC() : undefined;
     const availableTemplate = module.default || template
+    this.checkTemplateValidity(availableTemplate, opts);
     const defaultTemplate =
       availableTemplate ?
         availableTemplate.bind ?
@@ -29,10 +33,16 @@ export default abstract class ModuleResolver {
       case !!defaultTemplate && typeof defaultTemplate === 'function':
 
         if (defaultTemplate) {
-          component.template = defaultTemplate<typeof ViewModel>(vm);
+          component.template = defaultTemplate<typeof VMC>(vm);
         }
     }
     component.name = name;
     return component;
+  }
+  static checkTemplateValidity(template: Function | undefined, opts: ModuleGetterOptions): void {
+    // @ts-ignore
+    if (template && template.name && template.name === 'default') {
+      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tCannot export an anonymous function as default. \n\tplease name the function`);
+    }
   }
 }

@@ -1,18 +1,43 @@
-import type { JSXFactory, JSXFragmentFactory } from '../../types.d.ts';
+import type { JSXFactory, JSXFragmentFactory, Attributes } from '../../types.d.ts';
 import DOMElement from '../classes/DOMElement.ts';
+
+function setAttributes(element: DOMElement, attributes: Attributes) {
+  // TODO directives inside attributes
+  // TODO attributes
+  const entries = Object.entries(attributes);
+  entries.forEach(([key, value]) => {
+    // if the attribute is a function
+    // save it as a child of the element
+    // this will allow to bind the attribute
+    if (typeof value === 'function') {
+      element.setChild(new DOMElement({
+        isAttribute: true,
+        value,
+        name: key,
+        nodeType: 3,
+        parent: element,
+        children: []
+      }));
+      if (element.attributes) {
+        delete element.attributes[key];
+      }
+    }
+  });
+}
 /**
  * jsxFactory
  */
 export function h(...args: JSXFactory) {
   const [tag, attributes, ...children] = args;
-  // TODO directives inside attributes
-  // TODO attributes
   const element = new DOMElement({
-    name: tag.toString(),
+    name: tag && tag.name ? tag.name : tag.toString(),
     nodeType: 1,
     children: [],
     attributes,
   });
+  if (attributes) {
+    setAttributes(element, attributes);
+  }
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
@@ -48,7 +73,6 @@ export function h(...args: JSXFactory) {
     element.name = undefined;
     element.isAttribute = false;
   }
-  // TODO identify components
   return element;
 };
 /**
