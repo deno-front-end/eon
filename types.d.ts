@@ -1,5 +1,5 @@
 /** bind this part of the graph */
-declare type BindedValue = (() => string)
+declare type BoundValue = (() => string)
   | string
   | number
   | boolean
@@ -14,7 +14,7 @@ declare namespace JSX {
     children: any;
   }
   export interface Element {
-    children: Element | BindedValue;
+    children: Element | BoundValue;
     [k: string]: any;
   }
   /** style elements should only accept strings as chlidren  */
@@ -23,5 +23,7 @@ declare namespace JSX {
   }
 }
 type Attributes = { [k: string]: any };
-declare function h(tagName: string, attributes: Attributes | null, ...children: any[]): any;
-declare function hf(attributes: Attributes | null, ...children: any[]): any;
+declare function h(tagName: string | Function, attributes: Attributes | null, ...children: any[]): any;
+declare function hf(...children: any[]): any;
+type JSXFactory = Parameters<typeof h>;
+type JSXFragmentFactory = Parameters<typeof hf>;

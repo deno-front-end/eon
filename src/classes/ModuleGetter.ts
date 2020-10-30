@@ -1,27 +1,32 @@
 // @deno-types="../../types.d.ts"
 
+import DOMElement from './DOMElement.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
-import { path } from './../../deps.ts';
-import { v4 } from "https://deno.land/std@0.67.0/uuid/mod.ts";
+import { path, v4 } from './../../deps.ts';
 
 export interface ModuleGetterOptions {
   entrypoint: string;
 }
 export interface EonModule {
   name: string;
-  default?: (vm?: FunctionConstructor) => JSX.Element;
-  template?: (vm?: FunctionConstructor) => JSX.Element;
-  ViewModel: FunctionConstructor;
+  default?: <T>(vm?: T) => DOMElement;
+  template?: <T>(vm?: T) => DOMElement;
+  ViewModel: any;
   [k: string]: any;
 }
 export abstract class ModuleGetter {
+  /**
+   * creates a new ts file, with the transpiled JSX
+   * and imports this file with the dynamic import,
+   * this generate the ES Module with all the exports (named and default)
+   */
   private static async getModule(transpiled: string, opts: ModuleGetterOptions): Promise<EonModule> {
     const { entrypoint } = opts;
-    const newPath = path.join(Deno.cwd(), `${entrypoint}.out.eon.${v4.generate()}.js`);
+    const newPath = path.join(Deno.cwd(), `${entrypoint}.${v4.generate()}.ts`);
     // TODO import h and hf from a file
     Deno.writeTextFileSync(newPath, `
-      function h() { return true }
-      function hf() {return false }
+      // @ts-nocheck
+      import { h, hf } from '${path.join(import.meta.url, '../../functions/jsxFactory.ts')}';
       ${transpiled}
     `);
     const module = import(newPath) as unknown as EonModule;
@@ -32,11 +37,16 @@ export abstract class ModuleGetter {
     return module;
   }
   static async buildModule(opts: ModuleGetterOptions): Promise<EonModule> {
-    const { entrypoint } = opts;
     const transpiled = await ModuleGetter.getTranspiledFile(opts);
     const module = await ModuleGetter.getModule(transpiled, opts);
     return module;
   }
+  /**
+   *
+   * the transpilation is needed
+   * because we need to set the jsxFactory and the jsxFragmentFactory
+   * for the jsx transpilation
+   */
   static async getTranspiledFile(opts: ModuleGetterOptions): Promise<string> {
     const { entrypoint } = opts;
     const [diagnostics, mod] = await Deno.compile(entrypoint, undefined, {
