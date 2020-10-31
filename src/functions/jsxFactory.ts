@@ -11,10 +11,9 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
     // this will allow to bind the attribute
     if (typeof value === 'function') {
       element.setChild(new DOMElement({
-        isAttribute: true,
         value,
         name: key,
-        nodeType: 3,
+        nodeType: 2,
         parent: element,
         children: []
       }));
@@ -71,7 +70,6 @@ export function h(...args: JSXFactory) {
   if (typeof tag === 'function' && tag.name === 'hf') {
     element.nodeType = 11;
     element.name = undefined;
-    element.isAttribute = false;
   }
   return element;
 };

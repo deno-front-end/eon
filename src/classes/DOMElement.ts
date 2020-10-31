@@ -13,9 +13,11 @@ interface DOMElementInterface {
   value?: any;
   /** the type of the element
    * 1 for all elements including the fragments
-   * 3 for textnodes or attributes
+   * 2 for attributes
+   * 3 for textnodes
+   * 11 for fragments
    */
-  nodeType?: 1 | 3 | 11;
+  nodeType?: 1 | 2 | 3 | 11;
   /**
    * the element is a template and on top of the dom
    * or direct child of the top fragment
@@ -28,8 +30,6 @@ interface DOMElementInterface {
   isStyle?: boolean;
   /** the element is on top and it's a fragment element */
   isFragment?: boolean;
-  /** the element is an attribute and the nodetype is also 3 */
-  isAttribute?: boolean;
   /** the attributes of the element */
   attributes?: { [k: string]: any };
 }
@@ -39,7 +39,6 @@ export default class DOMElement implements DOMElementInterface {
   name: DOMElementInterface['name'];
   nodeType: DOMElementInterface['nodeType'];
   value: DOMElementInterface['value'];
-  isAttribute: DOMElementInterface['isAttribute'];
   attributes: DOMElementInterface['attributes'];
   constructor(opts: DOMElementInterface) {
     const {
@@ -48,7 +47,6 @@ export default class DOMElement implements DOMElementInterface {
       name,
       children,
       value,
-      isAttribute,
       attributes,
     } = opts;
     this.nodeType = nodeType;
@@ -56,11 +54,10 @@ export default class DOMElement implements DOMElementInterface {
     this.name = name;
     this.children = children;
     this.value = value;
-    this.isAttribute = isAttribute;
     this.attributes = attributes;
   }
   get isBoundTextnode(): boolean {
-    return this.nodeType === 3 && typeof this.value === 'function' && !this.isAttribute;
+    return this.nodeType === 3 && typeof this.value === 'function';
   }
   get isTemplate(): boolean {
     return this.nodeType === 1 && this.name === 'template' && (!this.parent || this.parent.isFragment);

@@ -21,7 +21,7 @@ export default abstract class ModuleResolver {
     });
     const vm = VMC ? new VMC() : undefined;
     const availableTemplate = module.default || template
-    this.checkTemplateValidity(availableTemplate, opts);
+    this.checkNameValidity(name, opts);
     const defaultTemplate =
       availableTemplate ?
         availableTemplate.bind ?
@@ -39,10 +39,9 @@ export default abstract class ModuleResolver {
     component.name = name;
     return component;
   }
-  static checkTemplateValidity(template: Function | undefined, opts: ModuleGetterOptions): void {
-    // @ts-ignore
-    if (template && template.name && template.name === 'default') {
-      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tCannot export an anonymous function as default. \n\tplease name the function`);
+  static checkNameValidity(name: string | undefined, opts: ModuleGetterOptions): void {
+    if (!name) {
+      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tall components should export a name`);
     }
   }
 }
