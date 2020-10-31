@@ -38,6 +38,7 @@ export class Eon {
     for await (let component of components) {
       await Eon.mount(component);
     }
+    ModuleGetter.typeCheckComponents();
     return components;
   }
 }

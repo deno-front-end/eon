@@ -3,6 +3,7 @@
 import DOMElement from './DOMElement.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 import { path, v4 } from './../../deps.ts';
+import EonComponentRegistry from './EonComponentRegistry.ts';
 
 export interface ModuleGetterOptions {
   entrypoint: string;
@@ -14,6 +15,7 @@ export interface EonModule {
   VMC: any;
   [k: string]: any;
 }
+const sessionUuid = v4.generate();
 export abstract class ModuleGetter {
   /**
    * creates a new ts file, with the transpiled JSX
@@ -22,7 +24,7 @@ export abstract class ModuleGetter {
    */
   private static async getModule(transpiled: string, opts: ModuleGetterOptions): Promise<EonModule> {
     const { entrypoint } = opts;
-    const newPath = path.join(Deno.cwd(), `${entrypoint}.${v4.generate()}.ts`);
+    const newPath = path.join(Deno.cwd(), `${entrypoint}.${sessionUuid}.js`);
     Deno.writeTextFileSync(newPath, `
       // @ts-nocheck
       import { h, hf } from '${path.join(import.meta.url, '../../functions/jsxFactory.ts')}';
@@ -48,19 +50,40 @@ export abstract class ModuleGetter {
    */
   static async getTranspiledFile(opts: ModuleGetterOptions): Promise<string> {
     const { entrypoint } = opts;
-    const [diagnostics, mod] = await Deno.compile(entrypoint, undefined, {
+    const result = await Deno.transpileOnly({
+      [entrypoint]: Deno.readTextFileSync(entrypoint),
+    }, {
       jsxFactory: "h",
       /** @ts-ignore  */
       jsxFragmentFactory: "hf",
-      types: ['./types.d.ts'],
       sourceMap: false,
       lib: ['dom'],
     });
+    return result[entrypoint].source;
+  }
+  static async typeCheckComponents(): Promise<void> {
+    let diagnostics: any[] = []
+    for await (let [key, component] of EonComponentRegistry.collection) {
+      if (component.file) {
+        const [diags, mod] = await Deno.compile(component.file, undefined, {
+          jsxFactory: "h",
+          /** @ts-ignore  */
+          jsxFragmentFactory: "hf",
+          types: ['./types.d.ts'],
+          sourceMap: false,
+          lib: ['dom'],
+        });
+        if (diags) {
+          diagnostics = [
+            ...diagnostics,
+            ...diags
+          ];
+        }
+      }
+    }
+
     // start reporting type errors
     // throws if defined
-    ModuleErrors.checkDiagnostics(diagnostics as any);
-    // only need the values
-    const [ transpiled ] = Object.values(mod);
-    return transpiled;
+    ModuleErrors.checkDiagnostics(diagnostics as any[]);
   }
 }

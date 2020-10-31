@@ -8,7 +8,7 @@ export abstract class ModuleErrors {
     if (diagnostics) {
       for (const d of diagnostics) {
         this.error(
-          `\n\t${blue(d.messageText)}\n\t${d.sourceLine}\n\tat ${blue(d.fileName)}`,
+          `\n\t${blue(d && d.messageText || '')}\n\t${d && d.sourceLine || ''}\n\tat ${blue(d && d.fileName || '')}`,
         );
       }
       Deno.exit(1);
