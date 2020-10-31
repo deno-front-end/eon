@@ -1,5 +1,6 @@
 import type { JSXFactory, JSXFragmentFactory, Attributes } from '../../types.d.ts';
 import DOMElement from '../classes/DOMElement.ts';
+import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
 
 function setAttributes(element: DOMElement, attributes: Attributes) {
   // TODO directives inside attributes
@@ -32,6 +33,7 @@ export function h(...args: JSXFactory) {
     name: tag && tag.name ? tag.name : tag.toString(),
     nodeType: 1,
     children: [],
+    component: EonComponentRegistry.getItemByName(tag),
     attributes,
   });
   if (attributes) {

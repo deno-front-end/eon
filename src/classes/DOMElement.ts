@@ -1,3 +1,5 @@
+import EonComponentRegistry from './EonComponentRegistry.ts';
+import EonComponent from './EonComponent.ts';
 /**
  * class that participate to the DOM Tree description
  */
@@ -32,6 +34,8 @@ interface DOMElementInterface {
   isFragment?: boolean;
   /** the attributes of the element */
   attributes?: { [k: string]: any };
+  /** related component */
+  component?: EonComponent;
 }
 export default class DOMElement implements DOMElementInterface {
   parent: DOMElementInterface['parent'];
@@ -40,6 +44,7 @@ export default class DOMElement implements DOMElementInterface {
   nodeType: DOMElementInterface['nodeType'];
   value: DOMElementInterface['value'];
   attributes: DOMElementInterface['attributes'];
+  component: DOMElementInterface['component'];
   constructor(opts: DOMElementInterface) {
     const {
       nodeType,
@@ -48,6 +53,7 @@ export default class DOMElement implements DOMElementInterface {
       children,
       value,
       attributes,
+      component,
     } = opts;
     this.nodeType = nodeType;
     this.parent = parent;
@@ -55,6 +61,7 @@ export default class DOMElement implements DOMElementInterface {
     this.children = children;
     this.value = value;
     this.attributes = attributes;
+    this.component = component;
   }
   get isBoundTextnode(): boolean {
     return this.nodeType === 3 && typeof this.value === 'function';
@@ -69,7 +76,7 @@ export default class DOMElement implements DOMElementInterface {
     return this.nodeType === 11 && this.name === undefined && !this.parent;
   }
   get isComponent(): boolean {
-    return this.nodeType === 1 && typeof this.value === 'object'
+    return this.nodeType === 1 && !!this.component;
   }
   setParent(parent: DOMTreeElement) {
     this.parent = parent;

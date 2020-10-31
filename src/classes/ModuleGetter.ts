@@ -23,7 +23,6 @@ export abstract class ModuleGetter {
   private static async getModule(transpiled: string, opts: ModuleGetterOptions): Promise<EonModule> {
     const { entrypoint } = opts;
     const newPath = path.join(Deno.cwd(), `${entrypoint}.${v4.generate()}.ts`);
-    // TODO import h and hf from a file
     Deno.writeTextFileSync(newPath, `
       // @ts-nocheck
       import { h, hf } from '${path.join(import.meta.url, '../../functions/jsxFactory.ts')}';
