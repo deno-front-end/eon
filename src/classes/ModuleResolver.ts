@@ -43,5 +43,8 @@ export default abstract class ModuleResolver {
     if (!name) {
       ModuleErrors.error(`\n\t${opts.entrypoint}\n\tall components should export a name`);
     }
+    if (name && !/^[a-zA-Z]\w+(\-\w+)+$/i.test(name)) {
+      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tCannot use ${name} as component's name\n\tplease follow the DOMString pattern: /^[a-zA-Z]\w+(\-\w+)+$/i\n\tfor example: component-name`);
+    }
   }
 }
