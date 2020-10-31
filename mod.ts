@@ -2,7 +2,6 @@ import { ModuleGetter } from './src/classes/ModuleGetter.ts';
 import ModuleResolver from './src/classes/ModuleResolver.ts';
 import './src/functions/jsxFactory.ts';
 import { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
-import EonComponentRegistry from './src/classes/EonComponentRegistry.ts';
 import EonComponent from './src/classes/EonComponent.ts';
 
 export class Eon {
