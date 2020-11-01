@@ -4,11 +4,18 @@ import { colors, path } from "../../deps.ts";
  */
 export abstract class ModuleErrors {
   static checkDiagnostics(diagnostics: any[]) {
-    const { blue } = colors;
+    const { blue, red, white, gray, bgRed } = colors;
     if (diagnostics) {
       for (const d of diagnostics) {
+        console.warn(d);
+        const underline = red(`${' '.repeat(d.start.character)}^${'~'.repeat(d.end.character - d.start.character - 1)}`)
+        let sourceline = d && d.sourceLine || '';
+        const start = d.start.character;
+        const end = d.end.character;
+        sourceline = gray(sourceline.substring(0, start)) + bgRed(white(sourceline.substring(start, end))) + gray(sourceline.substring(end));
+        // add the error
         this.error(
-          `\n\t${blue(d && d.messageText || '')}\n\t${d && d.sourceLine || ''}\n\tat ${blue(d && d.fileName || '')}`,
+          `\n\t${blue(d && d.messageText || '')}\n\t${sourceline}\n\t${underline}\n\tat ${blue(d && d.fileName || '')}`,
         );
       }
       Deno.exit(1);

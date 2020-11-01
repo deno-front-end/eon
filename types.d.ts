@@ -14,7 +14,7 @@ declare namespace JSX {
     children: any;
   }
   export interface Element extends DOMEventsLVL2 {
-    children: Element | BoundValue;
+    children?: Element | BoundValue;
     [k: string]: any;
   }
   /** style elements should only accept strings as chlidren  */

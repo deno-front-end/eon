@@ -6,8 +6,7 @@ export default function(this: VMC): JSX.Element {
   // keep in mind, this function is just to do the dom tree
   return (<>
     <template test={() => this.message}>
-      <component-a onclick={this.switch}>
-      </component-a>
+      <component-a onclick={this.switch} />
       <div class="container" onclick={this.switch}>
         {() => this.message}
       </div>
@@ -22,5 +21,9 @@ export class VMC {
   public message = "Hello World";
   public switch() {
     this.message = 'test';
+  }
+  static props(this: VMC, props: { message: string }): boolean {
+    this.message = props.message;
+    return true;
   }
 }
