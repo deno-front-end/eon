@@ -1,5 +1,5 @@
-import EonComponentRegistry from './EonComponentRegistry.ts';
 import EonComponent from './EonComponent.ts';
+import { increment } from '../functions/increment.ts';
 /**
  * class that participate to the DOM Tree description
  */
@@ -45,6 +45,7 @@ export default class DOMElement implements DOMElementInterface {
   value: DOMElementInterface['value'];
   attributes: DOMElementInterface['attributes'];
   component: DOMElementInterface['component'];
+  id?: number;
   constructor(opts: DOMElementInterface) {
     const {
       nodeType,
@@ -62,6 +63,14 @@ export default class DOMElement implements DOMElementInterface {
     this.value = value;
     this.attributes = attributes;
     this.component = component;
+    this.id = increment();
+  }
+  get uuid(): string {
+    const idType = this.isBoundTextnode ? 't'
+      : this.isTemplate ? 'tmp'
+      : this.isComponent ? 'c'
+      : 'n';
+    return `${idType}${this.id}`;
   }
   get isBoundTextnode(): boolean {
     return this.nodeType === 3 && typeof this.value === 'function';

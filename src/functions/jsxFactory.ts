@@ -54,11 +54,11 @@ export function h(...args: JSXFactory) {
         })
         domelement.parent = element;
         // get the nodetype
-        if (domelement && typeof domelement === 'string'
-          || domelement === null
-          || typeof domelement === 'boolean'
-          || typeof domelement === 'number'
-          || typeof domelement === 'function') {
+        if (child && typeof child === 'string'
+          || child === null
+          || typeof child === 'boolean'
+          || typeof child === 'number'
+          || child instanceof Function) {
           // @ts-ignore
           domelement.nodeType = 3;
         }
