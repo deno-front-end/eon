@@ -90,8 +90,8 @@ export default class DOMElement implements DOMElementInterface {
     return this.nodeType === 1 && !!this.component;
   }
   /** returns the component that is using this element */
-  get parentComponent(): EonComponent {
-    let parent = this.parent, domelement: DOMElement;
+  get parentComponent(): EonComponent | undefined {
+    let parent = this.parent, domelement: DOMElement | undefined;
     while (parent) {
       domelement = this.parent;
       parent = this.parent?.parent;

@@ -40,7 +40,7 @@ export default abstract class ModuleResolver {
    */
   static setComponentTemplate(component: EonComponent): boolean {
     const { VMC } = component;
-    const vm = VMC ? new VMC() : undefined;
+    const vm = VMC ? new (VMC as FunctionConstructor)() : undefined;
     const availableTemplate = component.templateFactory;
     const defaultTemplate =
       availableTemplate ?

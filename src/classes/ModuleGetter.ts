@@ -31,6 +31,7 @@ export abstract class ModuleGetter {
       ${transpiled}
     `);
     const module = import(newPath) as unknown as EonModule;
+    // @ts-ignore
     module.then(() => {
       Deno.removeSync(newPath);
     })
