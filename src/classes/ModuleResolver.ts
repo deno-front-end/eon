@@ -16,8 +16,7 @@ export default abstract class ModuleResolver {
       file: entrypoint,
       uuid: v4.generate(),
       templateFactory: module.default || template,
-      // @ts-ignore
-      name ,
+      name,
       VMC,
     });
     this.checkNameValidity(name, opts);
@@ -54,6 +53,11 @@ export default abstract class ModuleResolver {
       case !!defaultTemplate && typeof defaultTemplate === 'function':
         if (defaultTemplate) {
           component.template = defaultTemplate<typeof VMC>(vm);
+          if (component.template) {
+            // set the component of the template
+            // this allows all element to identify the component
+            component.template.component = component;
+          }
           return true;
         }
     }

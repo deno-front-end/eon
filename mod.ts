@@ -3,6 +3,7 @@ import ModuleResolver from './src/classes/ModuleResolver.ts';
 import './src/functions/jsxFactory.ts';
 import { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
 import EonComponent from './src/classes/EonComponent.ts';
+import DOMElementRegistry from './src/classes/DOMElementRegistry.ts';
 
 export class Eon {
   static async define(opts: ModuleGetterOptions): Promise<EonComponent> {
@@ -30,12 +31,12 @@ export class Eon {
     }
     const rootComponent = await render(root);
     const components = [rootComponent];
-    for await (let componentPath of registry) {
+    for await (const componentPath of registry) {
       const component = await render(componentPath);
       components.push(component);
     }
     // Eon.mount will set the template of the component
-    for await (let component of components) {
+    for await (const component of components) {
       await Eon.mount(component);
     }
     ModuleGetter.typeCheckComponents();
@@ -46,4 +47,4 @@ export class Eon {
 const components = await Eon.dev('./examples/hello-app/HelloApp.tsx', [
   './examples/hello-app/AnotherComponent.tsx'
 ])
-console.warn(components);
+console.warn(DOMElementRegistry.getElementsByNodeType(1));

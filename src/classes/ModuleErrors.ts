@@ -3,15 +3,15 @@ import { colors, path } from "../../deps.ts";
  * a class to display the errors inside the module
  */
 export abstract class ModuleErrors {
-  static checkDiagnostics(diagnostics: any[]) {
+  static checkDiagnostics(diagnostics: unknown[]) {
     const { blue, red, white, gray, bgRed } = colors;
     if (diagnostics && diagnostics.length) {
       let errors = '';
-      for (const d of diagnostics) {
-        const underline = red(`${' '.repeat(d.start.character)}^${'~'.repeat(d.end.character - d.start.character - 1)}`)
+      for (const d of diagnostics.filter(d => d.start)) {
+        const start = d.start && d.start.character;
+        const end = d.end && d.end.character;
+        const underline = red(`${' '.repeat(start)}^${'~'.repeat(end - start - 1)}`)
         let sourceline = d && d.sourceLine || '';
-        const start = d.start.character;
-        const end = d.end.character;
         sourceline = gray(sourceline.substring(0, start)) + bgRed(white(sourceline.substring(start, end))) + gray(sourceline.substring(end));
         // add the error
         errors +=+ `\n\t${blue(d && d.messageText || '')}\n\t${sourceline}\n\t${underline}\n\tat ${blue(d && d.fileName || '')}`;
@@ -24,7 +24,7 @@ export abstract class ModuleErrors {
       return;
     }
   }
-  static error(message: string, opts?: { [k: string]: any }): void {
+  static error(message: string, opts?: { [k: string]: unknown }): void {
     const { bgRed, red, bold, yellow } = colors;
     const m: string = this.message(
       `${bgRed("  ERROR  ")} ${red(message)}`,
@@ -32,7 +32,7 @@ export abstract class ModuleErrors {
     ) as string;
     throw new Error(m);
   }
-  static message(message: string, opts?: { [k: string]: any }): void | string {
+  static message(message: string, opts?: { [k: string]: unknown }): void | string {
     const { cyan, bold, white } = colors;
     const name = bold(cyan(" [Eon] "));
     if (opts && opts.returns) {

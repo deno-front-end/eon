@@ -42,24 +42,23 @@ export function h(...args: JSXFactory) {
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
-    children.forEach((child: any) => {
+    children.forEach((child: unknown) => {
       let domelement: DOMElement;
       if (child instanceof DOMElement) {
-        child.parent = element;
+        child.setParent(element);
         element.setChild(child);
       } else {
         domelement = new DOMElement({
           value: child,
           children: [],
         })
-        domelement.parent = element;
+        domelement.setParent(element);
         // get the nodetype
         if (child && typeof child === 'string'
           || child === null
           || typeof child === 'boolean'
           || typeof child === 'number'
           || child instanceof Function) {
-          // @ts-ignore
           domelement.nodeType = 3;
         }
         // TODO define what to do about objects
@@ -74,10 +73,10 @@ export function h(...args: JSXFactory) {
     element.name = undefined;
   }
   return element;
-};
+}
 /**
  * jsxFragmentFactory
  */
 export function hf(...args: JSXFragmentFactory) {
   return args;
-};
+}

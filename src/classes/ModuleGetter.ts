@@ -12,8 +12,8 @@ export interface EonModule {
   name: string;
   default<T>(vm?: T): DOMElement;
   template?: <T>(vm?: T) => DOMElement;
-  VMC: any;
-  [k: string]: any;
+  VMC: unknown;
+  [k: string]: unknown;
 }
 const sessionUuid = v4.generate();
 export abstract class ModuleGetter {
@@ -62,8 +62,8 @@ export abstract class ModuleGetter {
     return result[entrypoint].source;
   }
   static async typeCheckComponents(): Promise<void> {
-    let diagnostics: any[] = []
-    for await (let [key, component] of EonComponentRegistry.collection) {
+    let diagnostics: unknown[] = []
+    for await (const [key, component] of EonComponentRegistry.collection) {
       if (component.file) {
         const [diags, mod] = await Deno.compile(component.file, undefined, {
           jsxFactory: "h",
@@ -73,6 +73,7 @@ export abstract class ModuleGetter {
           sourceMap: false,
           lib: ['dom'],
         });
+        //  TODO typecheck props usages
         if (diags) {
           diagnostics = [
             ...diagnostics,
@@ -84,6 +85,6 @@ export abstract class ModuleGetter {
 
     // start reporting type errors
     // throws if defined
-    ModuleErrors.checkDiagnostics(diagnostics as any[]);
+    ModuleErrors.checkDiagnostics(diagnostics as unknown[]);
   }
 }

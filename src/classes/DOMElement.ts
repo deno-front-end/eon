@@ -1,5 +1,6 @@
 import EonComponent from './EonComponent.ts';
 import { increment } from '../functions/increment.ts';
+import DOMElementRegistry from './DOMElementRegistry.ts';
 /**
  * class that participate to the DOM Tree description
  */
@@ -12,7 +13,7 @@ interface DOMElementInterface {
   /** the name of the element */
   name?: string;
   /** the value of the element, defined if it's a textnode */
-  value?: any;
+  value?: unknown;
   /** the type of the element
    * 1 for all elements including the fragments
    * 2 for attributes
@@ -33,7 +34,7 @@ interface DOMElementInterface {
   /** the element is on top and it's a fragment element */
   isFragment?: boolean;
   /** the attributes of the element */
-  attributes?: { [k: string]: any };
+  attributes?: { [k: string]: unknown };
   /** related component */
   component?: EonComponent;
 }
@@ -64,6 +65,7 @@ export default class DOMElement implements DOMElementInterface {
     this.attributes = attributes;
     this.component = component;
     this.id = increment();
+    DOMElementRegistry.subscribe(this.uuid, this);
   }
   get uuid(): string {
     const idType = this.isBoundTextnode ? 't'
@@ -86,6 +88,15 @@ export default class DOMElement implements DOMElementInterface {
   }
   get isComponent(): boolean {
     return this.nodeType === 1 && !!this.component;
+  }
+  /** returns the component that is using this element */
+  get parentComponent(): EonComponent {
+    let parent = this.parent, domelement: DOMElement;
+    while (parent) {
+      domelement = this.parent;
+      parent = this.parent?.parent;
+    }
+    return (domelement || this).component;
   }
   setParent(parent: DOMTreeElement) {
     this.parent = parent;
