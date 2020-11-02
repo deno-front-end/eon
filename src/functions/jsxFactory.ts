@@ -4,7 +4,6 @@ import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
 
 function setAttributes(element: DOMElement, attributes: Attributes) {
   // TODO directives inside attributes
-  // TODO attributes
   const entries = Object.entries(attributes);
   entries.forEach(([key, value]) => {
     // if the attribute is a function
