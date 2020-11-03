@@ -4,6 +4,7 @@ import './src/functions/jsxFactory.ts';
 import { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
 import EonComponent from './src/classes/EonComponent.ts';
 import DOMElementRegistry from './src/classes/DOMElementRegistry.ts';
+import DevServer from './src/classes/DevServer.ts';
 
 export class Eon {
   static async define(opts: ModuleGetterOptions): Promise<EonComponent> {
@@ -48,3 +49,4 @@ const components = await Eon.dev('./examples/hello-app/HelloApp.tsx', [
   './examples/hello-app/AnotherComponent.tsx'
 ])
 console.warn(DOMElementRegistry.getElementsByNodeType(1));
+// DevServer.serveSPA();
