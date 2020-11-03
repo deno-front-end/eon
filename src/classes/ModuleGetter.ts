@@ -31,6 +31,8 @@ export abstract class ModuleGetter {
       ${transpiled}
     `);
     const module = import(newPath) as unknown as EonModule;
+    // TODO fix this for deno lint and deno run
+    // deno-lint-ignore ban-ts-comment
     // @ts-ignore
     module.then(() => {
       Deno.removeSync(newPath);

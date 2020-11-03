@@ -1,44 +1,55 @@
 import DOMElement from '../src/classes/DOMElement.ts';
-import { assertEquals } from '../deps.ts';
-  const fragment = new DOMElement({
-    children: [],
-    name: undefined,
-    nodeType: 11,
-  });
-  const fragmentTemplate = new DOMElement({
-    children: [],
-    name: 'template',
-    nodeType: 1,
-    parent: fragment
-  });
-  fragment.children.push(fragmentTemplate);
-  const template = new DOMElement({
-    children: [],
-    name: 'template',
-    nodeType: 1,
-    value: '',
-  });
-  const textnode = new DOMElement({
-    children: [],
-    name: undefined,
-    nodeType: 3,
-    parent: template,
-    value: 'Hello',
-  });
-  const boundTextnode = new DOMElement({
-    children: [],
-    name: undefined,
-    nodeType: 3,
-    parent: template,
-    value: () => 'sdgf',
-  });
-  const node = new DOMElement({
-    children: [],
-    name: 'div',
-    nodeType: 1,
-    parent: template,
-    value: '',
-  });
+import EonComponent from '../src/classes/EonComponent.ts';
+import { assertEquals, v4 } from '../deps.ts';
+
+const fragment = new DOMElement({
+  children: [],
+  name: undefined,
+  nodeType: 11,
+});
+
+const component = new EonComponent({
+  file: `${Deno.cwd()}/tests.tsx`,
+  uuid: v4.generate(),
+  name: 'test-component',
+  templateFactory: () => fragment,
+});
+fragment.component = component;
+
+const fragmentTemplate = new DOMElement({
+  children: [],
+  name: 'template',
+  nodeType: 1,
+  parent: fragment
+});
+fragment.children.push(fragmentTemplate);
+const template = new DOMElement({
+  children: [],
+  name: 'template',
+  nodeType: 1,
+  value: '',
+});
+const textnode = new DOMElement({
+  children: [],
+  name: undefined,
+  nodeType: 3,
+  parent: template,
+  value: 'Hello',
+});
+const boundTextnode = new DOMElement({
+  children: [],
+  name: undefined,
+  nodeType: 3,
+  parent: template,
+  value: () => 'sdgf',
+});
+const node = new DOMElement({
+  children: [],
+  name: 'div',
+  nodeType: 1,
+  parent: template,
+  value: '',
+});
 
 Deno.test('basic: nodeType 1 is an element', () => {
   const domelement = new DOMElement({
@@ -64,7 +75,7 @@ Deno.test('basic: nodeType 1 is an element', () => {
   assertEquals(true, domelement.uuid.startsWith('n'));
 });
 
-Deno.test('first letter of DOMElement s uuid sould depend on its nodeType', () => {
+Deno.test('first letter of DOMElement\'s uuid sould depend on it\'s nodeType', () => {
   assertEquals(true, template.uuid.startsWith('tmp'));
   assertEquals(true, node.uuid.startsWith('n'));
   assertEquals(true, template.uuid.startsWith('t'));
@@ -106,4 +117,10 @@ Deno.test('type validators of DOMElement are correct', () => {
   assertEquals(false, node.isFragment);
   assertEquals(false, node.isComponent);
   assertEquals(false, node.isBoundTextnode);
+});
+
+Deno.test('elements can access to the component', () => {
+  assertEquals(true, fragment.component === component);
+  assertEquals(true, fragmentTemplate.parentComponent === component);
+  assertEquals('test-component', fragmentTemplate.parentComponent && fragmentTemplate.parentComponent.name);
 });

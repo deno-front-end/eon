@@ -6,6 +6,8 @@ declare type BoundValue = (() => string)
   | boolean
   | unknown[]
   | null;
+
+// deno-lint-ignore no-namespace
 declare namespace JSX {
   export interface IntrinsicElements {
     style: JSX.StyleElement;
