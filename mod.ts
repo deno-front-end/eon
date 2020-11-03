@@ -49,4 +49,4 @@ const components = await Eon.dev('./examples/hello-app/HelloApp.tsx', [
   './examples/hello-app/AnotherComponent.tsx'
 ])
 console.warn(DOMElementRegistry.getElementsByNodeType(1));
-// DevServer.serveSPA();
+DevServer.serveSPA();
