@@ -4,3 +4,4 @@ export * as colors from "https://deno.land/std@0.61.0/fmt/colors.ts";
 export {
   assertEquals,
 } from "https://deno.land/std@0.76.0/testing/asserts.ts";
+export { serve } from "https://deno.land/std@0.76.0/http/server.ts";

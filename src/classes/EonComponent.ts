@@ -45,4 +45,15 @@ export default class EonComponent implements EonComponentInterface {
       EonComponentRegistry.subscribe(this.uuid, this);
     }
   }
+  /**
+   * instead of using the name as component identifier (ex: component-name)
+   * we will use a pseudo uuid (ex: data-a32dsfpi1)
+   */
+  get dataUuidForSPA(): string {
+    if (this.uuid) {
+      return `data-${this.uuid.split('-')[0]}`.toLowerCase();
+    } else {
+      return 'no-uuid';
+    }
+  }
 }

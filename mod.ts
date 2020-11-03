@@ -41,12 +41,12 @@ export class Eon {
       await Eon.mount(component);
     }
     ModuleGetter.typeCheckComponents();
+    await DevServer.serveSPA();
     return components;
   }
 }
 
-const components = await Eon.dev('./examples/hello-app/HelloApp.tsx', [
+await Eon.dev('./examples/hello-app/HelloApp.tsx', [
   './examples/hello-app/AnotherComponent.tsx'
 ])
-console.warn(DOMElementRegistry.getElementsByNodeType(1));
-DevServer.serveSPA();
+

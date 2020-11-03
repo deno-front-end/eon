@@ -1,3 +1,5 @@
+import { serve } from '../../deps.ts';
+import Bundler from './Bundler.ts';
 /**
  * a class to serve SPA/SSR/SSG
  * in development environment
@@ -5,7 +7,7 @@
 function random(min: number, max: number): number {
   return Math.round(Math.random() * (max - min)) + min;
 }
-export default class DevServer {
+export default class DevServer extends Bundler {
   private static port: number = 3040;
   private static HMRport: number = DevServer.port;
   private static hostname: string = 'localhost';
@@ -14,11 +16,13 @@ export default class DevServer {
    * TCP server
    */
   static async serveSPA() {
+    const application = await DevServer.buildApplication();
+    console.warn(2)
     this.port = await this.getFreePort(this.port);
-    const listener = Deno.listen({ hostname: this.hostname, port: this.port });
-    console.log(`Listening on ${this.hostname}:${this.port}`);
-    for await (const conn of listener) {
-      console.warn(conn);
+    const server = serve({ hostname: this.hostname, port: this.port });
+    DevServer.message(`Listening on http://${this.hostname}:${this.port}`);
+    for await (const req of server) {
+      req.respond({ body: application });
     }
   }
   private static async getFreePort(port: number): Promise<number> {

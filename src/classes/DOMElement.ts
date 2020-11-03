@@ -89,6 +89,19 @@ export default class DOMElement implements DOMElementInterface {
   get isComponent(): boolean {
     return this.nodeType === 1 && !!this.component;
   }
+  get isInSVG(): boolean {
+    let result = false;
+    let parent = this.parent, domelement: DOMElement | undefined;
+    while (parent) {
+      if (domelement && domelement.name === 'svg' || this.name === 'svg') {
+        result = true;
+        break;
+      }
+      domelement = this.parent;
+      parent = this.parent?.parent;
+    }
+    return result;
+  }
   /** returns the component that is using this element */
   get parentComponent(): EonComponent | undefined {
     let parent = this.parent, domelement: DOMElement | undefined;

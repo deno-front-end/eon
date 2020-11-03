@@ -1,4 +1,5 @@
-import { colors, path } from "../../deps.ts";
+import { colors } from "../../deps.ts";
+import Utils from "./Utils.ts";
 /**
  * a class to display the errors inside the module
  */
@@ -13,7 +14,7 @@ interface ModuleErrorsDiagnostic {
   messageText?: string;
   fileName?: string;
 }
-export abstract class ModuleErrors {
+export abstract class ModuleErrors extends Utils {
   static checkDiagnostics(diagnostics: unknown[]) {
     const { blue, red, white, gray, bgRed } = colors;
     if (diagnostics && diagnostics.length) {
@@ -43,15 +44,5 @@ export abstract class ModuleErrors {
       { returns: true },
     ) as string;
     throw new Error(m);
-  }
-  static message(message: string, opts?: { [k: string]: unknown }): void | string {
-    const { cyan, bold, white } = colors;
-    const name = bold(cyan(" [Eon] "));
-    if (opts && opts.returns) {
-      return `${name} ${message}`;
-    } else {
-      console.log(name, message);
-      return;
-    }
   }
 }
