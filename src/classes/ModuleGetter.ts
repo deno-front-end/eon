@@ -27,7 +27,7 @@ export abstract class ModuleGetter {
     const newPath = path.join(Deno.cwd(), `${entrypoint}.${sessionUuid}.js`);
     Deno.writeTextFileSync(newPath, `
       // @ts-nocheck
-      import { h, hf } from '${path.join(import.meta.url, '../../functions/jsxFactory.ts')}';
+      import { h, hf } from '${new URL('../functions/jsxFactory.ts', import.meta.url).toString()}';
       ${transpiled}
     `);
     const module = import(newPath) as unknown as EonModule;

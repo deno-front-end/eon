@@ -21,19 +21,20 @@ export default abstract class Utils {
   }
   protected static renderPattern(pattern: string, options: PatternOptions): string {
     let result = pattern;
-    const { data, open = '"{{', close = '}}"' } = options;
+    const open = '"{{', close = '}}"';
+    const { data } = options;
     const fn = new Function(
       '__value',
       ...Object.keys(data),
-      `try { return eval('('+ __value + ')'); } catch(err) { throw err; }`,
+      `try { return eval(__value ); } catch(err) { throw err; }`,
     );
     const values = Object.values(data);
     while (
       result.indexOf(open) > -1 && result.indexOf(close) > -1
     ) {
       const start = result.indexOf(open);
-      const end = result.indexOf(close) + 2;
-      const substrContent = result.substring(start + 2, end - 2).trim();
+      const end = result.indexOf(close) + 3;
+      const substrContent = result.substring(start + 3, end - 3).trim();
       const partStart = result.substring(0, start);
       const partEnd = result.substring(end);
       result = partStart + fn(substrContent, ...values) + partEnd;
