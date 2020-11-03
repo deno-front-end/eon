@@ -60,6 +60,7 @@ export abstract class ModuleGetter {
       /** @ts-ignore  */
       jsxFragmentFactory: "hf",
       sourceMap: false,
+      jsx: "react",
       lib: ['dom'],
     });
     return result[entrypoint].source;
