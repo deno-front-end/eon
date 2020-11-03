@@ -7,7 +7,7 @@ export interface EonComponentInterface {
   uuid?: string;
   /** name */
   name?: string;
-  /** path the component */
+  /** path of the component */
   file?: string;
   /** the DOM tree of the component */
   template?: DOMElement;

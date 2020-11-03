@@ -1,5 +1,17 @@
 import DOMElement from '../src/classes/DOMElement.ts';
 import { assertEquals } from '../deps.ts';
+  const fragment = new DOMElement({
+    children: [],
+    name: undefined,
+    nodeType: 11,
+  });
+  const fragmentTemplate = new DOMElement({
+    children: [],
+    name: 'template',
+    nodeType: 1,
+    parent: fragment
+  });
+  fragment.children.push(fragmentTemplate);
   const template = new DOMElement({
     children: [],
     name: 'template',
@@ -12,6 +24,13 @@ import { assertEquals } from '../deps.ts';
     nodeType: 3,
     parent: template,
     value: 'Hello',
+  });
+  const boundTextnode = new DOMElement({
+    children: [],
+    name: undefined,
+    nodeType: 3,
+    parent: template,
+    value: () => 'sdgf',
   });
   const node = new DOMElement({
     children: [],
@@ -52,8 +71,39 @@ Deno.test('first letter of DOMElement s uuid sould depend on its nodeType', () =
 });
 
 Deno.test('type validators of DOMElement are correct', () => {
+  assertEquals(false, fragment.isTemplate);
+  assertEquals(false, fragment.isStyle);
+  assertEquals(true, fragment.isFragment);
+  assertEquals(false, fragment.isComponent);
+  assertEquals(false, fragment.isBoundTextnode);
+
   assertEquals(true, template.isTemplate);
   assertEquals(false, template.isStyle);
   assertEquals(false, template.isFragment);
   assertEquals(false, template.isComponent);
+  assertEquals(false, template.isBoundTextnode);
+
+  assertEquals(true, fragmentTemplate.isTemplate);
+  assertEquals(false, fragmentTemplate.isStyle);
+  assertEquals(false, fragmentTemplate.isFragment);
+  assertEquals(false, fragmentTemplate.isComponent);
+  assertEquals(false, fragmentTemplate.isBoundTextnode);
+
+  assertEquals(false, textnode.isTemplate);
+  assertEquals(false, textnode.isStyle);
+  assertEquals(false, textnode.isFragment);
+  assertEquals(false, textnode.isComponent);
+  assertEquals(false, textnode.isBoundTextnode);
+
+  assertEquals(false, boundTextnode.isTemplate);
+  assertEquals(false, boundTextnode.isStyle);
+  assertEquals(false, boundTextnode.isFragment);
+  assertEquals(false, boundTextnode.isComponent);
+  assertEquals(true, boundTextnode.isBoundTextnode);
+
+  assertEquals(false, node.isTemplate);
+  assertEquals(false, node.isStyle);
+  assertEquals(false, node.isFragment);
+  assertEquals(false, node.isComponent);
+  assertEquals(false, node.isBoundTextnode);
 });
