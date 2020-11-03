@@ -72,6 +72,7 @@ export abstract class ModuleGetter {
           jsxFactory: "h",
           /** @ts-ignore  */
           jsxFragmentFactory: "hf",
+          jsx: "react",
           types: ['./types.d.ts'],
           sourceMap: false,
           lib: ['dom'],
