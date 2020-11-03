@@ -1,23 +1,30 @@
-import * as HelloApp2 from './HelloApp2.jsx';
-import * as HelloApp3 from './HelloApp2.jsx';
-import * as HelloApp4 from './HelloApp2.jsx';
-
-export const name = "AppHello";
-export default function(this: ViewModel): JSX.Element {
+export const name = "hello-app";
+export default function(this: VMC) {
   // what to do about all the things referenced here
   // maybe it's a helper zone for SSR
   // but what about SPA
   // keep in mind, this function is just to do the dom tree
   return (<>
-    <template>
-      <div class="container">{() => this.message}</div>
+    <template test={() => this.message}>
+      <style>
+        {`.container { color: red; }`}
+      </style>
+      <component-a>
+      </component-a>
+      <div class="container" onclick={this.switch}>
+        {() => this.message}
+      </div>
     </template>
-    <style>
-      {`.container { color: red; }`}
-    </style>
   </>
   )
 }
-export class ViewModel {
+export class VMC {
   public message = "Hello World";
+  public switch() {
+    this.message = 'test';
+  }
+  static props(this: VMC, props: { message: string }): boolean {
+    this.message = props.message;
+    return true;
+  }
 }
