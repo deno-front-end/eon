@@ -20,7 +20,15 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
       if (element.attributes) {
         delete element.attributes[key];
       }
+      return;
     }
+    element.setChild(new DOMElement({
+      value,
+      name: key,
+      nodeType: 2,
+      parent: element,
+      children: []
+    }));
   });
 }
 /**

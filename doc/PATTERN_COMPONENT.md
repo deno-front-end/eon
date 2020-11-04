@@ -51,8 +51,8 @@ function component_ctx() {
   function init() {
     tmp1 = document.createElement('template');
     n3 = document.createElement('div');
-    t4 = new Text(' ');
     c5 = document.createElement('data-[uuid_sub_component]');
+    t4 = new Text(' ');
     t4_data_update = () => this.message;
     /* using the component's props attribute value */
     c5_props_update = () => ({

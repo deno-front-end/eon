@@ -20,4 +20,11 @@ export default abstract class EonComponentRegistry {
   static get collection() {
     return Array.from(this.registry.entries())
   }
+  static getRootComponent(): EonComponent | undefined {
+    const isComponent = this.collection.find(([, component]: [string, EonComponent]) => component.isRootComponent)
+    if (isComponent) {
+      const found = isComponent[1];
+      return found;
+    }
+  }
 }

@@ -38,7 +38,7 @@ export abstract class ModuleGetter {
       Deno.removeSync(newPath);
     })
     .catch((err: Error) => Deno.removeSync(newPath))
-    return module;
+    return await module;
   }
   static async buildModule(opts: ModuleGetterOptions): Promise<EonModule> {
     const transpiled = await ModuleGetter.getTranspiledFile(opts);

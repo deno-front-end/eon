@@ -1,6 +1,7 @@
 import EonComponent from './EonComponent.ts';
 import { increment } from '../functions/increment.ts';
 import DOMElementRegistry from './DOMElementRegistry.ts';
+
 /**
  * class that participate to the DOM Tree description
  */
@@ -68,14 +69,22 @@ export default class DOMElement implements DOMElementInterface {
     DOMElementRegistry.subscribe(this.uuid, this);
   }
   get uuid(): string {
-    const idType = this.isBoundTextnode ? 't'
+    const idType = this.isBoundTextnode ? 'bt'
       : this.isTemplate ? 'tmp'
-      : this.isComponent ? 'c'
-      : 'n';
+        : this.isComponent ? 'c'
+          : this.nodeType === 3 ? 't'
+            : this.nodeType === 2 ? 'a'
+              : 'n';
     return `${idType}${this.id}`;
+  }
+  get isTextnode(): boolean {
+    return this.nodeType === 3 && !this.isBoundTextnode;
   }
   get isBoundTextnode(): boolean {
     return this.nodeType === 3 && typeof this.value === 'function';
+  }
+  get isBoundAttribute(): boolean {
+    return this.nodeType === 2 && typeof this.value === 'function';
   }
   get isTemplate(): boolean {
     return this.nodeType === 1 && this.name === 'template' && (!this.parent || this.parent.isFragment);
@@ -87,34 +96,110 @@ export default class DOMElement implements DOMElementInterface {
     return this.nodeType === 11 && this.name === undefined && !this.parent;
   }
   get isComponent(): boolean {
-    return this.nodeType === 1 && !!this.component;
+    return this.nodeType === 1 && !!this.component && !this.isTemplate;
   }
   get isInSVG(): boolean {
-    let result = false;
-    let parent = this.parent, domelement: DOMElement | undefined;
-    while (parent) {
-      if (domelement && domelement.name === 'svg' || this.name === 'svg') {
+    let result = this.name === 'svg';
+    let parent = this.parent;
+    while (parent && !result) {
+      if (parent && parent.name === 'svg' || this.name === 'svg') {
         result = true;
         break;
       }
-      domelement = this.parent;
-      parent = this.parent?.parent;
+      parent = parent?.parent;
     }
     return result;
   }
   /** returns the component that is using this element */
   get parentComponent(): EonComponent | undefined {
-    let parent = this.parent, domelement: DOMElement | undefined;
+    let parent = this.parent;
     while (parent) {
-      domelement = this.parent;
-      parent = this.parent?.parent;
+      if (parent?.parent) {
+        parent = parent?.parent;
+      } else {
+        break;
+      }
     }
-    return (domelement || this).component;
+    return (parent || this).component;
   }
   setParent(parent: DOMTreeElement) {
     this.parent = parent;
   }
   setChild(child: DOMTreeElement) {
     this.children.push(child);
+  }
+  get declarationSPA(): string | undefined {
+    if (this.nodeType && [11, 2].includes(this.nodeType)) {
+      return undefined;
+    }
+    if (this.isBoundTextnode) {
+      /**
+       * if the element is a bound textnode
+       * it should use as vars
+       * one for the textnode element: new Text(' ')
+       * one for the previous value
+       * one for the next value
+       * one for the update function
+       */
+      return `${this.uuid}, ${this.uuid}_prev, ${this.uuid}_update, ${this.uuid}_next`;
+    }
+    if (this.isComponent) {
+      /**
+       * if the element is a component
+       * it should use as vars
+       * one for the component element: document.createElement('my-component')
+       * one for props function
+       */
+      return `${this.uuid}, ${this.uuid}_props`;
+    }
+    return this.uuid;
+  }
+  get assignementSPA(): string | undefined {
+    if (this.nodeType && [11, 2].includes(this.nodeType)) {
+      return undefined;
+    }
+    if (this.isBoundTextnode) {
+      /**
+       * if the element is a bound textnode
+       * it should use as vars
+       * one for the textnode element: new Text(' ')
+       * one for the previous value
+       * one for the next value
+       * one for the update function
+       */
+      return `${this.uuid} = new Text(' ');
+        ${this.uuid}_update = (${this.value});
+        ${this.uuid}.data = ${this.uuid}_update();`;
+    }
+    if (this.isTextnode) {
+      return `${this.uuid} = \`${this.value}\``;
+    }
+    if (this.isComponent && this.component) {
+      /**
+       * if the element is a component
+       * it should use as vars
+       * one for the component element: document.createElement('my-component')
+       * one for props function
+       */
+      return `${this.uuid} = document.createElement('${this.component.dataUuidForSPA}');
+        ${this.uuid}_props = (() => {})`;// TODO get props function
+    }
+    return `${this.uuid} = document.createElement${this.isInSVG ? 'NS' : ''}('${this.name}');`;
+  }
+  get appendChildSPA(): string | undefined {
+    if (this.nodeType && [11].includes(this.nodeType) || this.isBoundAttribute) {
+      return undefined;
+    }
+    if (this.nodeType === 2 && this.parent) {
+      return `${this.parent.uuid}.setAttribute('${this.name}', '${this.value}');`
+    }
+    if (this.parent && this.parent.parent) {
+      return `${this.parent.uuid}.append(${this.uuid});`;
+    }
+  }
+  get returnTemplateStatementSPA() {
+    if (this.isTemplate) {
+      return `return ${this.uuid};`;
+    }
   }
 }

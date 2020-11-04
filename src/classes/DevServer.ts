@@ -1,5 +1,5 @@
 import { serve } from '../../deps.ts';
-import Bundler from './Bundler.ts';
+import DevBundler from './DevBundler.ts';
 /**
  * a class to serve SPA/SSR/SSG
  * in development environment
@@ -7,7 +7,7 @@ import Bundler from './Bundler.ts';
 function random(min: number, max: number): number {
   return Math.round(Math.random() * (max - min)) + min;
 }
-export default class DevServer extends Bundler {
+export default class DevServer extends DevBundler {
   private static port: number = 3040;
   private static HMRport: number = DevServer.port;
   private static hostname: string = 'localhost';
@@ -15,14 +15,16 @@ export default class DevServer extends Bundler {
    * start development services for Single Page Applications
    * TCP server
    */
-  static async serveSPA() {
-    const application = await DevServer.buildApplication();
-    console.warn(2)
+  static async serveSPA(): Promise<void> {
+    const application = await DevServer.buildApplicationSPA();
+    if (!application) {
+      return;
+    }
     this.port = await this.getFreePort(this.port);
     const server = serve({ hostname: this.hostname, port: this.port });
     DevServer.message(`Listening on http://${this.hostname}:${this.port}`);
     for await (const req of server) {
-      req.respond({ body: application });
+      req.respond({ body: application.dom });
     }
   }
   private static async getFreePort(port: number): Promise<number> {
