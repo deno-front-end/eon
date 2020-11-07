@@ -4,6 +4,7 @@ import EonComponent from './EonComponent.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 import DOMElementRegistry from './DOMElementRegistry.ts';
 import Patterns from './Patterns.ts';
+import { v4 } from '../../deps.ts';
 
 type EonApplication = {
   script: string;
@@ -17,46 +18,12 @@ export default class DevBundler extends Utils {
    * start building the application
    */
   protected static async buildApplicationSPA(): Promise<EonApplication | null> {
-    let app: string = `/** Eon application compiled */\n`;
-    const files: string[] = [];
-    // first get all available components
-    const components: EonComponent[] = EonComponentRegistry.collection.map(([key, component]) => component);
     const rootComponent: EonComponent | undefined = EonComponentRegistry.getRootComponent();
     if (!rootComponent) {
       ModuleErrors.error('root component not found');
       return null;
     }
-    // create a string for each components
-    // the string should return a Eon Component Declaration Pattern
-    // file://doc/PATTERN_COMPONENT.md
-    components.forEach((component: EonComponent, i: number) => {
-      if (component.file) {
-        const newPath = `${component.uuid}.ts`;
-        const vmcName = `VMC${i}______${i}`;
-        // save the new string into the files used by Deno.bundle
-        const file = this.createMirrorEsmFile(component, vmcName);
-        Deno.writeTextFileSync(newPath, file);
-        files.push(newPath);
-        if (component.VMC) {
-          app += `\import { VMC as ${vmcName} } from '${component.file}';`;
-        }
-        if (file) {
-          app += `\n${file}`;
-        }
-      }
-    });
-    Deno.writeTextFileSync('eon-app.ts', app);
-    const [diags, emit] = await Deno.bundle('./eon-app.ts', undefined, {
-      jsx: "react",
-      jsxFactory: "h",
-      // @ts-ignore
-      jsxFragmentFactory: "hf",
-      sourceMap: false,
-    });
-    files.push('./eon-app.ts');
-    files.forEach((file) => {
-      Deno.removeSync(file);
-    });
+    const emit = await this.buildScriptSPA();
     const script = `<script>${emit}</script>`;
     const style = '<style></style>';
     const body = `<${rootComponent.dataUuidForSPA}></${rootComponent.dataUuidForSPA}>`;
@@ -77,7 +44,45 @@ export default class DevBundler extends Utils {
       dom
     };
   }
-  protected static buildScriptSPA() {}
+  protected static async buildScriptSPA(): Promise<string> {
+    let app: string = `/** Eon application compiled */\n`;
+    const files: string[] = [];
+    // first get all available components
+    const components: EonComponent[] = EonComponentRegistry.collection.map(([key, component]) => component);
+    const appPath = `${ v4.generate()}.ts`;
+    // create a string for each components
+    // the string should return a Eon Component Declaration Pattern
+    // file://doc/PATTERN_COMPONENT.md
+    components.forEach((component: EonComponent, i: number) => {
+      if (component.file) {
+        const newPath = `${component.uuid}.ts`;
+        const vmcName = `VMC${i}______${i}`;
+        // save the new string into the files used by Deno.bundle
+        const file = this.createMirrorEsmFile(component, vmcName);
+        Deno.writeTextFileSync(newPath, file);
+        files.push(newPath);
+        if (component.VMC) {
+          app += `\import { VMC as ${vmcName} } from '${component.file}';`;
+        }
+        if (file) {
+          app += `\n${file}`;
+        }
+      }
+    });
+    Deno.writeTextFileSync(appPath, app);
+    const [, emit] = await Deno.bundle(`./${appPath}`, undefined, {
+      jsx: "react",
+      jsxFactory: "h",
+      // @ts-ignore
+      jsxFragmentFactory: "hf",
+      sourceMap: false,
+    });
+    files.push(`./${appPath}`);
+    files.forEach((file) => {
+      Deno.removeSync(file);
+    });
+    return emit;
+  }
   /**
    * creates mirror esm files
    * for each component
@@ -93,12 +98,13 @@ export default class DevBundler extends Utils {
         element_vars: DOMElementRegistry.getVarsSPA(component),
         element_assignments: DOMElementRegistry.getAssignementsSPA(component),
         element_parent_append_childs: DOMElementRegistry.getAppendChildsSPA(component),
-        element_set_attributes:'',// DOMElementRegistry.getAttributesSettingsSPA(component),
         return_root_template: DOMElementRegistry.getReturnTemplateSPA(component),
         element_destructions: '', // DOMElementRegistry.getDestructionsSPA(component),
-        bound_textnodes_updates: '',
+        bound_textnodes_updates: DOMElementRegistry.getUpdatesSPA(component),
         bound_attributes_updates: '',
         props_updates: '',
+        iterations_declarations: DOMElementRegistry.getIterationsDeclarationsSPA(component),
+        iterations_call: DOMElementRegistry.getIterationsCallSPA(component),
       }
     });
   }

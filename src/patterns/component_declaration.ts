@@ -2,14 +2,13 @@
 function component_ctx() {
   "{{ element_vars /** let n1, n2; */ }}"
   let component = "{{ vmc_instantiate }}";
-
+  // all render iteration functions
+  "{{ iterations_declarations }}"
   /* will assign all the nodes inside vars*/
   function init() {
     "{{ element_assignments }}"
-    // append childs
+    // append childs - attributes will use set attribute
     "{{ element_parent_append_childs /** parent.append(...childs) */ }}"
-    // set attributes for all elements
-    "{{ element_set_attributes }}"
     // should return the root template
     "{{ return_root_template }}"
   }
@@ -24,6 +23,9 @@ function component_ctx() {
     "{{ bound_attributes_updates }}"
     // all component should update their props
     "{{ props_updates }}"
+    // call the functions that render the first iterations
+    // first iterations has no iteration ancestors
+    "{{ iterations_call }}"
     if ("{{ vmc_name }}".updated) {
       "{{ vmc_name }}".updated.bind(component)(component);
     }
@@ -53,12 +55,19 @@ customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
   static VMC = "{{ vmc_name }}";
   constructor() {
     super();
-    const { init, update, component } = component_ctx();
+    const { init, update, destroy, component } = component_ctx();
     let template = init();
     // @ts-ignore
     let templateContent = template.content;
     this.component = component;
+    this.update = update;
+    this.destroy = destroy;
+    this.props = "{{ vmc_name }}".props.bind(component);
     const shadowRoot = this.attachShadow({ mode: 'open' })
       .append(...template.childNodes);
+  }
+
+  connectedCallback() {
+    this.update();
   }
 });

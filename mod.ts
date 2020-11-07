@@ -5,7 +5,7 @@ import { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
 import EonComponent from './src/classes/EonComponent.ts';
 import DevServer from './src/classes/DevServer.ts';
 
-export class Eon {
+export class EonApplication {
   static async define(opts: ModuleGetterOptions): Promise<EonComponent> {
     const module = await ModuleGetter.buildModule(opts);
     const component = await ModuleResolver.resolve(module, opts);
@@ -45,7 +45,5 @@ export class Eon {
   }
 }
 
-await Eon.dev('./examples/hello-app/HelloApp.tsx', [
-  './examples/hello-app/AnotherComponent.tsx'
-])
+await EonApplication.dev('./examples/hello-app/HelloApp.tsx', [])
 

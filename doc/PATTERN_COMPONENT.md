@@ -74,7 +74,7 @@ function component_ctx() {
       t4_data2_prev = t4_data_next;
     }
     /* using the component's props attribute value */
-    c5.component.props(c5_props_update(component));
+    c5.props(c5_props_update(component));
   }
   return {
     component,

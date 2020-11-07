@@ -27,7 +27,7 @@ export abstract class ModuleErrors extends Utils {
         let sourceline = diag && diag.sourceLine || '';
         sourceline = gray(sourceline.substring(0, start)) + bgRed(white(sourceline.substring(start, end))) + gray(sourceline.substring(end));
         // add the error
-        errors +=+ `\n\t${blue(diag && diag.messageText || '')}\n\t${sourceline}\n\t${underline}\n\tat ${blue(diag && diag.fileName || '')}`;
+        errors += `\n\t${blue(diag && diag.messageText || '')}\n\t${sourceline}\n\t${underline}\n\tat ${blue(diag && diag.fileName || '')}`;
       }
       this.error(
         errors,

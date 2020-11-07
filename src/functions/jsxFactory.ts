@@ -1,6 +1,8 @@
 import type { JSXFactory, JSXFragmentFactory, Attributes } from '../../types.d.ts';
 import DOMElement from '../classes/DOMElement.ts';
 import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
+import DOMElementDescriber from '../classes/DOMElementDescriber.ts';
+import type { DOMElementDescription } from '../classes/DOMElementDescriber.ts';
 
 function setAttributes(element: DOMElement, attributes: Attributes) {
   // TODO directives inside attributes
@@ -59,13 +61,22 @@ export function h(...args: JSXFactory) {
           value: child,
           children: [],
         })
+        const isArrowIterationFunction: DOMElementDescription | null = DOMElementDescriber.getArrowFunctionDescription(child as any);
         domelement.setParent(element);
-        // get the nodetype
-        if (child && typeof child === 'string'
+        if (isArrowIterationFunction) {
+          // save the arrow iteration informations
+          domelement.isArrowIterationFunction = isArrowIterationFunction;
+          // need to use the arrow function, to get the child domelement
+          const newChild = (child as () => DOMElement)() as (DOMElement);
+          // set child and set parent
+          domelement.setChild(newChild);
+          newChild.setParent(domelement);
+        } else if (child && typeof child === 'string'
           || child === null
           || typeof child === 'boolean'
           || typeof child === 'number'
           || child instanceof Function) {
+          // get the nodetype
           domelement.nodeType = 3;
         }
         // TODO define what to do about objects

@@ -5,3 +5,4 @@ export {
   assertEquals,
 } from "https://deno.land/std@0.76.0/testing/asserts.ts";
 export { serve } from "https://deno.land/std@0.76.0/http/server.ts";
+export { parse, print } from "https://x.nest.land/swc@0.0.6/mod.ts";

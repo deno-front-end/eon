@@ -9,6 +9,7 @@ interface PatternOptions {
  * delivers some utils methods
  */
 export default abstract class Utils {
+  static build = Deno.build;
   static message(message: string, opts?: { [k: string]: unknown }): void | string {
     const { cyan, bold, white } = colors;
     const name = bold(cyan(' [Eon] '));

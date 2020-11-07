@@ -12,29 +12,66 @@ export default class DOMElementRenderer {
   public static getVarsSPA(component: EonComponent) {
     const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
     const vars = collection
-      .filter((domelement) => domelement.declarationSPA)
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.declarationSPA)
       .map((domelement) => domelement.declarationSPA);
     return `let ${vars.join(',\n')};`;
   }
   public static getAssignementsSPA(component: EonComponent) {
     const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
     const assignements = collection
-      .filter((domelement) => domelement.assignementSPA)
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.assignementSPA)
       .map((domelement) => domelement.assignementSPA);
     return assignements.join('\n');
   }
   public static getAppendChildsSPA(component: EonComponent) {
     const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
     const appends = collection
-      .filter((domelement) => domelement.appendChildSPA)
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.appendChildSPA)
       .map((domelement) => domelement.appendChildSPA);
     return appends.join('\n');
+  }
+  public static getUpdatesSPA(component: EonComponent) {
+    const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
+    const updates = collection
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.updateSPA)
+      .map((domelement) => domelement.updateSPA);
+    return updates.join('\n');
   }
   public static getReturnTemplateSPA(component: EonComponent) {
     const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
     const result = collection
-      .filter((domelement) => domelement.returnTemplateStatementSPA)
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.returnTemplateStatementSPA)
       .map((domelement) => domelement.returnTemplateStatementSPA);
+    return result.join('\n');
+  }
+  public static getIterationsDeclarationsSPA(component: EonComponent) {
+    const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
+    const result = collection
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.isArrowIterationFunction
+        && domelement.iterationDeclaration)
+      .map((domelement) => domelement.iterationDeclaration);
+    return result.join('\n');
+  }
+  public static getIterationsCallSPA(component: EonComponent) {
+    const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
+    const result = collection
+      .filter((domelement) => domelement
+        && !domelement.isInArrowIteration
+        && domelement.isArrowIterationFunction
+        && domelement.iterationCall)
+      .map((domelement) => domelement.iterationCall);
     return result.join('\n');
   }
   static getElementsByNodeType(nodeType: number) {

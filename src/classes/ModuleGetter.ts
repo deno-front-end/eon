@@ -74,7 +74,7 @@ export abstract class ModuleGetter {
           /** @ts-ignore  */
           jsxFragmentFactory: "hf",
           jsx: "react",
-          types: ['./types.d.ts'],
+          types: [new URL('../../types.d.ts', import.meta.url).pathname],
           sourceMap: false,
           lib: ['dom'],
         });
