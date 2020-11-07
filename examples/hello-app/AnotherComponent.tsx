@@ -1,4 +1,4 @@
-export default function (this: VMC, props: { message: string }) {
+export default function (this: VMC, props: EonProps<{ message: string }>) {
   return (<template useVMC={VMC} meta={import.meta}>
       {(number, i, arr = this.array) =>
         <div>

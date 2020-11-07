@@ -105,3 +105,9 @@ interface DOMEventsLVL2 {
   ontransitionend?: (...args: unknown[]) => unknown;
   onwheel?: (...args: unknown[]) => unknown;
 }
+/**
+ * Utils Types from Eon
+ */
+declare type EonProps<T> = { children?: any } & {
+  [P in keyof T]: ((handler: (value: T[P]) => void) => T[P]);
+}

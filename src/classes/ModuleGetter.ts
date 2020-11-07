@@ -10,8 +10,7 @@ export interface ModuleGetterOptions {
 }
 export interface EonModule {
   name: string;
-  default<T>(vm?: T): DOMElement;
-  template?: <T>(vm?: T) => DOMElement;
+  default<T>(props?: unknown, vm?: T): DOMElement;
   VMC: unknown;
   [k: string]: unknown;
 }
