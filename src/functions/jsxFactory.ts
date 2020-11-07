@@ -19,7 +19,7 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
         parent: element,
         children: []
       }));
-      if (element.attributes) {
+      if (element.attributes && (key !== "useVMC" && element.name !== "template")) {
         delete element.attributes[key];
       }
       return;

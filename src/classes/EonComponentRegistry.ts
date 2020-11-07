@@ -17,6 +17,14 @@ export default abstract class EonComponentRegistry {
       return component;
     }
   }
+  static getItemByUrl(url: string): EonComponent | undefined {
+    const entries = Array.from(this.registry.entries());
+    const found = entries.find(([key, component]) => component.file === url);
+    if (found) {
+      const [, component] = found;
+      return component;
+    }
+  }
   static get collection() {
     return Array.from(this.registry.entries())
   }

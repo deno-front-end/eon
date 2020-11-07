@@ -22,7 +22,7 @@ export class EonApplication {
    */
   static async dev(root: string, registry: string[]): Promise<EonComponent[]> {
     async function render(path: string) {
-      const component = await Eon.define({
+      const component = await EonApplication.define({
         entrypoint: path,
       });
       // assign the root position to the root component
@@ -35,9 +35,9 @@ export class EonApplication {
       const component = await render(componentPath);
       components.push(component);
     }
-    // Eon.mount will set the template of the component
+    // EonApplication.mount will set the template of the component
     for await (const component of components) {
-      await Eon.mount(component);
+      await EonApplication.mount(component);
     }
     ModuleGetter.typeCheckComponents();
     await DevServer.serveSPA();

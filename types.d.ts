@@ -1,6 +1,7 @@
 /** bind this part of the graph */
 declare type BoundValue = (() => string)
   | (() => JSX.IntrinsicElements[])
+  | ((currentValue: any, index: any, array?: any[]) => JSX.Element)
   | string
   | number
   | boolean
@@ -10,6 +11,7 @@ declare type BoundValue = (() => string)
 declare namespace JSX {
   export interface IntrinsicElements {
     style: JSX.StyleElement;
+    template: JSX.TemplateElement;
     [k: string]: JSX.Element;
   }
   interface ElementChildrenAttribute {
@@ -22,6 +24,16 @@ declare namespace JSX {
   /** style elements should only accept strings as chlidren  */
   export interface StyleElement extends Element {
     children: string;
+  }
+  /**
+   * template element is used to pass informations to the DOMTree analyzer.
+   * useVMC should be a constructor
+   * meta is required, this allows the DOMTree to render a module
+   */
+  export interface TemplateElement extends Element {
+    useVMC?: {}
+    meta: ImportMeta;
+    name?: string;
   }
 }
 type Attributes = { [k: string]: unknown } | DOMEventsLVL2;

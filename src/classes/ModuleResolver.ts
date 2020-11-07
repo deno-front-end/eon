@@ -11,6 +11,7 @@ export default abstract class ModuleResolver {
     // for this we use the default export or the export named template
     // we are waiting for a function
     // TODO define what to do if default/template is a string
+    // TODO module.default is now required
     const { template, VMC, name } = module;
     const component = new EonComponent({
       file: entrypoint,
@@ -19,21 +20,8 @@ export default abstract class ModuleResolver {
       name,
       VMC,
     });
-    this.checkNameValidity(name, opts);
     component.name = name;
     return component;
-  }
-  /**
-   * throws if the name is undefined or
-   * doesn't follow the DOMString pattern
-   */
-  static checkNameValidity(name: string | undefined, opts: ModuleGetterOptions): void {
-    if (!name) {
-      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tall components should export a name`);
-    }
-    if (name && !/^[a-zA-Z]\w+(\-\w+)+$/i.test(name)) {
-      ModuleErrors.error(`\n\t${opts.entrypoint}\n\tCannot use ${name} as component's name\n\tplease follow the DOMString pattern: /^[a-zA-Z]\w+(\-\w+)+$/i\n\tfor example: component-name`);
-    }
   }
   /**
    * set the template of the component
