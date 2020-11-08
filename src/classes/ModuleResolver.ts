@@ -5,7 +5,7 @@ import { v4 } from '../../deps.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 
 export default abstract class ModuleResolver {
-  static async resolve(module: EonModule, opts: ModuleGetterOptions): Promise<EonComponent | null> {
+  static async resolve(module: EonModule, opts: ModuleGetterOptions): Promise<EonComponent> {
     const { entrypoint } = opts;
     // get the default DOM Graph
     // for this we use the default export or the export named template
@@ -13,23 +13,27 @@ export default abstract class ModuleResolver {
     // TODO define what to do if default/template is a string
     // TODO module.default is now required
     const { VMC, name } = module;
-    if (module.default && module.default instanceof Function) {
-      const template = module.default();
-      if (!template.attributes || !template.attributes.meta || !template.attributes.meta.url || !template.attributes.meta) {
-        ModuleErrors.error(`Cannot set a component without a meta attribute: \n\tplease follow the following pattern\n\t<template meta={import.meta} />`)
-        return null;
-      }
-      const component = new EonComponent({
-        file: template.attributes.meta.url,
-        uuid: v4.generate(),
-        templateFactory: module.default,
-        name,
-        VMC,
-      });
-      component.name = name;
-      return component;
+    if (!module.default || module.default && !(module.default instanceof Function)) {
+      throw ModuleErrors.error(`${entrypoint}\n\t Export default is required for all component`)
     }
-    return null
+    const template = module.default();
+    const meta = template.attributes && template.attributes.meta as ImportMeta;
+    if (!template.attributes
+        || !meta
+        || meta
+          && !meta.url) {
+      throw ModuleErrors.error(`${entrypoint}\n\t Cannot set a component without a meta attribute: \n\tplease follow the following pattern\n\t<template meta={import.meta} />`)
+    }
+    const component = new EonComponent({
+      file: meta.url,
+      uuid: v4.generate(),
+      templateFactory: module.default,
+      name,
+      VMC,
+    });
+    console.warn(component.file);
+    component.name = name;
+    return component;
   }
   /**
    * set the template of the component

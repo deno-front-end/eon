@@ -9,7 +9,7 @@ export class EonApplication {
   static async define(opts: ModuleGetterOptions): Promise<EonComponent> {
     const module = await ModuleGetter.buildModule(opts);
     const component = await ModuleResolver.resolve(module, opts);
-    return component
+    return component;
   }
   static async mount(component: EonComponent): Promise<boolean> {
     const isSaved: boolean = await ModuleResolver.setComponentTemplate(component);

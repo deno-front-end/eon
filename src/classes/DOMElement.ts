@@ -227,7 +227,8 @@ export default class DOMElement extends Utils implements DOMElementInterface {
     if (this.nodeType && [11].includes(this.nodeType) || this.isBoundAttribute) {
       return undefined;
     }
-    if (this.nodeType === 2 && this.parent) {
+    if (this.nodeType === 2 && this.parent && !this.parent.isTemplate) {
+      console.warn(this.value);
       return `${this.parent.uuid}.setAttribute('${this.name}', '${this.value}');`
     }
     if (this.parent && this.parent.parent) {

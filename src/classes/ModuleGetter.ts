@@ -24,6 +24,7 @@ export abstract class ModuleGetter {
   private static async getModule(transpiled: string, opts: ModuleGetterOptions): Promise<EonModule> {
     const { entrypoint } = opts;
     const newPath = path.join(Deno.cwd(), `${entrypoint}.${sessionUuid}.js`);
+    // TODO transform all imported components
     Deno.writeTextFileSync(newPath, `
       // @ts-nocheck
       import { h, hf } from '${new URL('../functions/jsxFactory.ts', import.meta.url).toString()}';

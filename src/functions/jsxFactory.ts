@@ -45,6 +45,7 @@ export function h(...args: JSXFactory) {
     component: EonComponentRegistry.getItemByName(tag),
     attributes,
   });
+  console.warn(tag.meta);
   if (attributes) {
     setAttributes(element, attributes);
   }
