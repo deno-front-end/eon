@@ -16,7 +16,7 @@ interface ModuleErrorsDiagnostic {
 }
 export abstract class ModuleErrors extends Utils {
   static checkDiagnostics(diagnostics: unknown[]) {
-    const { blue, red, white, gray, bgRed } = colors;
+    const { blue, red,  gray, } = colors;
     if (diagnostics && diagnostics.length) {
       let errors = '';
       for (const d of diagnostics.filter(d => (d as ModuleErrorsDiagnostic).start)) {
@@ -25,7 +25,7 @@ export abstract class ModuleErrors extends Utils {
         const end = diag.end && diag.end.character || 0;
         const underline = red(`${' '.repeat(start)}^${'~'.repeat(end - start - 1)}`)
         let sourceline = diag && diag.sourceLine || '';
-        sourceline = gray(sourceline.substring(0, start)) + bgRed(white(sourceline.substring(start, end))) + gray(sourceline.substring(end));
+        sourceline = gray(sourceline.substring(0, start)) + red(sourceline.substring(start, end)) + gray(sourceline.substring(end));
         // add the error
         errors += `\n\t${blue(diag && diag.messageText || '')}\n\t${sourceline}\n\t${underline}\n\tat ${blue(diag && diag.fileName || '')}`;
       }
