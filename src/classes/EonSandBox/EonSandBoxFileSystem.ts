@@ -121,7 +121,6 @@ export default class EonSandBoxFileSystem extends Utils {
     const newJSX = await Deno.transpileOnly({
       [sandBoxPath]: `// @ts-nocheck
         import { h, hf } from '${hPath}';
-import Utils from '../Utils';
         ${content}`
     }, {
       jsxFactory: 'h',

@@ -1,15 +1,20 @@
-import { ModuleGetter } from './src/classes/ModuleGetter.ts';
 import ModuleResolver from './src/classes/ModuleResolver.ts';
 import './src/functions/jsxFactory.ts';
-import { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
+import type { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
 import EonComponent from './src/classes/EonComponent.ts';
 import DevServer from './src/classes/DevServer.ts';
+import EonSandBox from './src/classes/EonSandBox/EonSandBox.ts';
 
 export class EonApplication {
-  static async define(opts: ModuleGetterOptions): Promise<EonComponent> {
-    const module = await ModuleGetter.buildModule(opts);
-    const component = await ModuleResolver.resolve(module, opts);
-    return component;
+  static async getComponents(opts: ModuleGetterOptions): Promise<EonComponent[]> {
+    await EonSandBox.startSession();
+    const modules = await EonSandBox.renderSession();
+    const components: EonComponent[] = [];
+    for (let module of modules) {
+      const component = await ModuleResolver.resolve(module, opts);
+      components.push(component);
+    }
+    return components;
   }
   static async mount(component: EonComponent): Promise<boolean> {
     const isSaved: boolean = await ModuleResolver.setComponentTemplate(component);
@@ -21,25 +26,14 @@ export class EonApplication {
    * @param registry {string} all the components used in the application
    */
   static async dev(root: string, registry: string[]): Promise<EonComponent[]> {
-    async function render(path: string) {
-      const component = await EonApplication.define({
-        entrypoint: path,
-      });
-      // assign the root position to the root component
-      component.isRootComponent = root === path;
-      return component;
-    }
-    const rootComponent = await render(root);
-    const components = [rootComponent];
-    for await (const componentPath of registry) {
-      const component = await render(componentPath);
-      components.push(component);
-    }
+    const components = await EonApplication.getComponents({
+      entrypoint: root,
+    });
     // EonApplication.mount will set the template of the component
     for await (const component of components) {
       await EonApplication.mount(component);
     }
-    ModuleGetter.typeCheckComponents();
+    EonSandBox.typecheckSession();
     await DevServer.serveSPA();
     return components;
   }
