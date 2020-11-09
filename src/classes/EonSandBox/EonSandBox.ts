@@ -60,8 +60,8 @@ export default class EonSandBox extends EonSandBoxFileSystem {
     for await (let [filePath, item] of entries) {
       item.module = await this.getSandBoxMirrorModule(filePath);
     }
-    this.typecheckSession();
     console.warn(this.mapFiles);
+    this.typecheckSession();
   }
 }
 EonSandBox.startSession()

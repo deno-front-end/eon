@@ -1,5 +1,6 @@
-import { path } from "../../../deps.ts";
+import { path, fs, colors } from "../../../deps.ts";
 import { ModuleErrors } from "../ModuleErrors.ts";
+import Utils from "../Utils.ts";
 
 interface EonSandBoxDocument {
   /**
@@ -34,7 +35,7 @@ interface EonSandBoxDocument {
  * using transpileOnly to transform the module before fetching it
  */
 
-export default class EonSandBoxFileSystem {
+export default class EonSandBoxFileSystem extends Utils {
   protected static paths: string[] = [];
   protected static readonly mapFiles: Map<string, EonSandBoxDocument> = new Map();
   protected static readonly currentLocation: string = Deno.cwd();
@@ -120,6 +121,7 @@ export default class EonSandBoxFileSystem {
     const newJSX = await Deno.transpileOnly({
       [sandBoxPath]: `// @ts-nocheck
         import { h, hf } from '${hPath}';
+import Utils from '../Utils';
         ${content}`
     }, {
       jsxFactory: 'h',
@@ -134,16 +136,20 @@ export default class EonSandBoxFileSystem {
    * type checking step for all components
    */
   static async typecheckSession(): Promise<void> {
+    const { gray, green, white, red } = colors;
     let diagnostics: unknown[] = []
     let documents = Array.from(this.mapFiles.entries()).map(([, document]) => document);
+    // log type checking
+    this.message(gray('Type checking the current working directory'));
     for await( let document of documents) {
       if (document) {
+        this.message(`${gray('Check')} ${green(document.sourcePath)}`);
         const [diags] = await Deno.compile(document.sourcePath, undefined, {
           jsxFactory: 'h',
           /** @ts-ignore */
           jsxFragmentFactory: 'hf',
           jsx: 'react',
-          types: [new URL('/types.d.ts', import.meta.url).toString()],
+          types: [new URL('./../../../types.d.ts', import.meta.url).pathname],
           sourceMap: false,
         });
         //  TODO typecheck props usages
@@ -152,11 +158,15 @@ export default class EonSandBoxFileSystem {
             ...diagnostics,
             ...diags
           ];
+          this.message(`${gray('\t\t-')} ${red(`error found into ${document.sourcePath}`)}`);
+        } else {
+          this.message(`${gray('\t\t-')} ${white('no error found')}`);
         }
       }
     }
     // start reporting type errors
     // throws if defined
     ModuleErrors.checkDiagnostics(diagnostics as unknown[]);
+    this.message(`${green('Success')} ${white('type checking passed with no errors')}`);
   }
 }

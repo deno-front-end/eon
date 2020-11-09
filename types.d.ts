@@ -108,6 +108,21 @@ interface DOMEventsLVL2 {
 /**
  * Utils Types from Eon
  */
+/**
+ * both reactive and passive props are allowed
+ */
 declare type EonProps<T> = { children?: any } & {
+  [P in keyof T]: ((handler: (value: T[P]) => void) => T[P]) | T[P];
+}
+/**
+ * only reactive props are allowed
+ */
+declare type EonReactiveProps<T> = { children?: any } & {
   [P in keyof T]: ((handler: (value: T[P]) => void) => T[P]);
+}
+/**
+ * no reactions are allowed for those props
+ */
+declare type EonPassiveProps<T> = { children?: any } & {
+  [P in keyof T]: T[P];
 }

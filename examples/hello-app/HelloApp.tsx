@@ -1,11 +1,14 @@
 import AnotherComponent from "./AnotherComponent.tsx";
 
-export default function (this: VMC, props: EonProps<{ message: string }>) {
+export default function (this: VMC, props: EonReactiveProps<{ message: string }>) {
   return (<template meta={import.meta}>
     <style>
       {`.container { color: red; }`}
     </style>
-    <AnotherComponent message={() => ''}>
+    <AnotherComponent
+      message={() => ''}
+      test={() => ''}
+      map={() => new Map()}>
     </AnotherComponent>
     <div class="container" onclick={() => this.switchText()}>
       {() => '> ' + Date.now()}
