@@ -1,5 +1,6 @@
 import { serve } from '../../deps.ts';
 import DevBundler from './DevBundler.ts';
+import EonSandBox from "./EonSandBox/EonSandBox.ts";
 /**
  * a class to serve SPA/SSR/SSG
  * in development environment
@@ -23,6 +24,9 @@ export default class DevServer extends DevBundler {
     this.port = await this.getFreePort(this.port);
     const server = serve({ hostname: this.hostname, port: this.port });
     DevServer.message(`Listening on http://${this.hostname}:${this.port}`);
+    setTimeout(() => {
+      EonSandBox.typecheckSession();
+    }, 0);
     for await (const req of server) {
       req.respond({ body: application.dom });
     }

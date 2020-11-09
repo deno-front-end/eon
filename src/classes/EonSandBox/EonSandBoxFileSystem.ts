@@ -2,7 +2,7 @@ import { path, fs, colors } from "../../../deps.ts";
 import { ModuleErrors } from "../ModuleErrors.ts";
 import Utils from "../Utils.ts";
 
-interface EonSandBoxDocument {
+export interface EonSandBoxDocument {
   /**
    * the content of the document in the original folder
    */
@@ -59,7 +59,12 @@ export default class EonSandBoxFileSystem extends Utils {
       module: undefined,
     });
     // save it's equivalent js file
-    Deno.writeTextFileSync(importable, jsxFileContent);
+    Deno.writeTextFileSync(importable, `
+      // @ts-nocheck
+      export * from '${sandBoxPath}';
+      import Component from '${sandBoxPath}';
+      export default Component;
+    `);
   }
   /**
    * add a tsconfig file to the session

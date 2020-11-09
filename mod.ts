@@ -1,17 +1,25 @@
 import ModuleResolver from './src/classes/ModuleResolver.ts';
 import './src/functions/jsxFactory.ts';
-import type { ModuleGetterOptions } from './src/classes/ModuleGetter.ts';
+import type { ModuleGetterOptions } from './src/classes/ModuleGetterOptions.ts';
 import EonComponent from './src/classes/EonComponent.ts';
 import DevServer from './src/classes/DevServer.ts';
 import EonSandBox from './src/classes/EonSandBox/EonSandBox.ts';
+import { path } from './deps.ts';
 
 export class EonApplication {
   static async getComponents(opts: ModuleGetterOptions): Promise<EonComponent[]> {
     await EonSandBox.startSession();
-    const modules = await EonSandBox.renderSession();
+    const documents = await EonSandBox.renderSession();
+    const rootComponentPath = path.join(Deno.cwd(), opts.entrypoint);
     const components: EonComponent[] = [];
-    for (let module of modules) {
-      const component = await ModuleResolver.resolve(module, opts);
+    for (let document of documents) {
+      const component = await ModuleResolver.resolve(document.module, opts);
+      if (document.sourcePath === rootComponentPath) {
+        component.isRootComponent = true;
+      }
+      component.sourcePath = document.sourcePath;
+      component.file = document.importable;
+      component.sandBoxPath = document.sandBoxPath;
       components.push(component);
     }
     return components;
@@ -33,7 +41,6 @@ export class EonApplication {
     for await (const component of components) {
       await EonApplication.mount(component);
     }
-    EonSandBox.typecheckSession();
     await DevServer.serveSPA();
     return components;
   }

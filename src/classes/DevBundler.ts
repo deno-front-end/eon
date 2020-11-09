@@ -62,7 +62,7 @@ export default class DevBundler extends Utils {
         Deno.writeTextFileSync(newPath, file);
         files.push(newPath);
         if (component.VMC) {
-          app += `\import { VMC as ${vmcName} } from '${component.file}';`;
+          app += `\n/** Eon harmony import */\nimport { VMC as ${vmcName} } from '${component.sourcePath}';`;
         }
         if (file) {
           app += `\n${file}`;

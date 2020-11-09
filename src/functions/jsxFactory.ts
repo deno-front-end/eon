@@ -38,14 +38,14 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
  */
 export function h(...args: JSXFactory) {
   const [tag, attributes, ...children] = args;
+  const component = EonComponentRegistry.getItemByTemplate(tag);
   const element = new DOMElement({
     name: tag && tag.name ? tag.name : tag.toString(),
     nodeType: 1,
     children: [],
-    component: EonComponentRegistry.getItemByName(tag),
+    component,
     attributes,
   });
-  console.warn(tag.meta);
   if (attributes) {
     setAttributes(element, attributes);
   }

@@ -1,6 +1,6 @@
 import { fs } from "../../../deps.ts";
 import EonSandBoxFileSystem from './EonSandBoxFileSystem.ts';
-import { EonModule } from '../ModuleGetter.ts';
+import { EonSandBoxDocument } from './EonSandBoxFileSystem.ts';
 
 /**
  * class to build parallel folder
@@ -56,14 +56,13 @@ export default class EonSandBox extends EonSandBoxFileSystem {
    * run the session by using Deno.run
    * this should be used after the eon sandbox is created
    */
-  static async renderSession(): Promise<EonModule[]> {
+  static async renderSession(): Promise<EonSandBoxDocument[]> {
     const entries = this.mapFiles.entries();
-    const modules: EonModule[] = [];
-    for await (let [filePath, item] of entries) {
+    const a = Array.from(entries);
+    for await (let [filePath, item] of a) {
       const module = await this.getSandBoxMirrorModule(filePath);
       item.module = module;
-      modules.push(module);
     }
-    return modules;
+    return a.map(([filePath, item]) => item);
   }
 }

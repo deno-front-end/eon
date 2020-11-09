@@ -62,7 +62,9 @@ customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
     this.component = component;
     this.update = update;
     this.destroy = destroy;
-    this.props = "{{ vmc_name }}".props.bind(component);
+    if ("{{ vmc_name }}".props) {
+      this.props = "{{ vmc_name }}".props.bind(component);
+    }
     const shadowRoot = this.attachShadow({ mode: 'open' })
       .append(...template.childNodes);
   }

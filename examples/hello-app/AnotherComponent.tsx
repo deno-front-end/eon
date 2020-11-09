@@ -1,5 +1,6 @@
+// @ts-ignore
 export default function (this: VMC, props: EonReactiveProps<{ message: string; test: string; map: Map<string, string> }>) {
-  return (<template useVMC={VMC} meta={import.meta}>
+  return (<template>
    {(/*for*/number, i, arr = this.array) =>
         <div>
           {() => `Hello ${number} ${i}`}

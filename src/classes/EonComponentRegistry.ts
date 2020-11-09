@@ -9,9 +9,16 @@ export default abstract class EonComponentRegistry {
   static getComponent(uuid: string): EonComponent | undefined {
     return this.registry.get(uuid);
   }
-  static getItemByName(name: string): EonComponent | undefined {
+  /**
+   * the module and the component are using the same function,
+   * so we just need to compare the value
+   * these are equal
+   */
+  static getItemByTemplate(template: Function): EonComponent | undefined {
     const entries = Array.from(this.registry.entries());
-    const found = entries.find(([key, component]) => component.name === name);
+    const found = entries.find(([key, component]) => {
+      return component.templateFactory === template;
+    });
     if (found) {
       const [, component] = found;
       return component;

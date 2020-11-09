@@ -1,7 +1,7 @@
 import AnotherComponent from "./AnotherComponent.tsx";
 
 export default function (this: VMC, props: EonReactiveProps<{ message: string }>) {
-  return (<template meta={import.meta}>
+  return (<template>
     <style>
       {`.container { color: red; }`}
     </style>
@@ -11,6 +11,7 @@ export default function (this: VMC, props: EonReactiveProps<{ message: string }>
       map={() => new Map()}>
     </AnotherComponent>
     <div class="container">
+      {() => this.message}
       {() => '> ' + Date.now()}
     </div>
   </template>)

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "jsxFactory": "h",
     "jsxFragmentFactory": "hf",
-    "jsx": "react"
+    "jsx": "react",
+    "types": ["./types.d.ts"]
   },
 }

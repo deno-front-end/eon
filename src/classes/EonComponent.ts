@@ -1,5 +1,5 @@
 import DOMElement from './DOMElement.ts';
-import type { EonModule } from './ModuleGetter.ts';
+import type { EonModule } from './EonModule.ts';
 import EonComponentRegistry from './EonComponentRegistry.ts';
 
 export interface EonComponentInterface {
@@ -7,8 +7,12 @@ export interface EonComponentInterface {
   uuid?: string;
   /** name */
   name?: string;
-  /** path of the component */
+  /** path to the sandbox file of the component */
   file?: string;
+  /** path to the sandbox file of the component */
+  sandBoxPath?: string;
+  /** path to the end user's component */
+  sourcePath?: string;
   /** the DOM tree of the component */
   template?: DOMElement;
   /** component's VMC */
@@ -22,6 +26,8 @@ export default class EonComponent implements EonComponentInterface {
   uuid: EonComponentInterface['uuid'];
   name: EonComponentInterface['name'];
   file: EonComponentInterface['file'];
+  sourcePath: EonComponentInterface['sourcePath'];
+  sandBoxPath: EonComponentInterface['sandBoxPath'];
   template: EonComponentInterface['template'];
   VMC: EonComponentInterface['VMC'];
   isRootComponent: EonComponentInterface['isRootComponent'] = false;

@@ -228,10 +228,9 @@ export default class DOMElement extends Utils implements DOMElementInterface {
       return undefined;
     }
     if (this.nodeType === 2 && this.parent && !this.parent.isTemplate) {
-      console.warn(this.value);
       return `${this.parent.uuid}.setAttribute('${this.name}', '${this.value}');`
     }
-    if (this.parent && this.parent.parent) {
+    if (this.parent && this.parent.parent || this.parent && this.parent.isTemplate) {
       return `${this.parent.uuid}.append(${this.uuid});`;
     }
   }
@@ -248,7 +247,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
       }`;
     }
     if (this.isComponent) {
-      return `${this.uuid}.props(${this.uuid}_props(component));`
+      return `${this.uuid} && ${this.uuid}.props && ${this.uuid}.props(${this.uuid}_props(component));`
     }
   }
   get returnTemplateStatementSPA() {

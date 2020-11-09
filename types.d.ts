@@ -7,6 +7,7 @@ declare type BoundValue = (() => string)
   | boolean
   | unknown[]
   | null;
+
 // deno-lint-ignore no-namespace
 declare namespace JSX {
   export interface IntrinsicElements {
@@ -32,7 +33,7 @@ declare namespace JSX {
    */
   export interface TemplateElement extends Element {
     useVMC?: {}
-    meta: ImportMeta;
+    meta?: ImportMeta;
     name?: string;
   }
 }
@@ -118,7 +119,7 @@ declare type EonProps<T> = { children?: any } & {
  * only reactive props are allowed
  */
 declare type EonReactiveProps<T> = { children?: any } & {
-  [P in keyof T]: ((handler: (value: T[P]) => void) => T[P]);
+  [P in keyof T]: (handler: (value: T[P]) => void) => T[P];
 }
 /**
  * no reactions are allowed for those props
