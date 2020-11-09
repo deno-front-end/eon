@@ -10,7 +10,7 @@ export default function (this: VMC, props: EonReactiveProps<{ message: string }>
       test={() => ''}
       map={() => new Map()}>
     </AnotherComponent>
-    <div class="container" onclick={() => this.switchText()}>
+    <div class="container">
       {() => '> ' + Date.now()}
     </div>
   </template>)

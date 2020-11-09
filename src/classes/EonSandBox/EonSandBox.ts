@@ -19,7 +19,7 @@ export default class EonSandBox extends EonSandBoxFileSystem {
     const paths = fs.walkSync(this.currentLocation, {
       includeDirs: true,
       includeFiles: true,
-      skip: [/(.+?)(\.git|\.gitignore|\.vscode|tsconfig\.json)(?:\/|$)/i]
+      skip: [/(.+?)(\b\.git|\b\.gitignore|\b\.vscode|\btsconfig\.json|\bnode_modules)(?:\/|$)/i]
     });
     for (let document of paths) {
       try {

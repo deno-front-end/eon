@@ -56,7 +56,6 @@ export abstract class ModuleErrors extends Utils {
           ${underline}
         at ${blue(diag && diag.fileName || '')}:${diag.start && diag.start.line + 1 || ''}:${diag.start && diag.start.character || ''}`;
       }
-      console.log(diagnostics);
       this.error(
         errors,
       );
@@ -71,6 +70,6 @@ export abstract class ModuleErrors extends Utils {
       `${bgRed("  ERROR  ")} ${red(message)}`,
       { returns: true },
     ) as string;
-    throw new TypeError(m);
+    console.error(m);
   }
 }
