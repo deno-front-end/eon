@@ -33,7 +33,7 @@ export class VMC extends AnVMC {
       this.newData.test.message = `${i} test deep reactivity`;
       i++;
     }, 50);
-    console.warn(this.newData.test)
+    console.warn(this.newData.test);
   }
 
   public switchText() {
