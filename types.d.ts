@@ -26,11 +26,9 @@ declare namespace JSX {
   export interface StyleElement extends Element {
     children: string;
   }
-  /**
-   * template element is used to pass informations to the DOMTree analyzer.
-   * useVMC should be a constructor
-   * meta is required, this allows the DOMTree to render a module
-   */
+  export interface ElementAttributesProperty {
+    props: Object; // specify the property name to use
+  }
   export interface TemplateElement extends Element {
     useVMC?: {}
     meta?: ImportMeta;
@@ -114,12 +112,6 @@ interface DOMEventsLVL2 {
  */
 declare type EonProps<T> = { children?: any } & {
   [P in keyof T]: ((handler: (value: T[P]) => void) => T[P]) | T[P];
-}
-/**
- * only reactive props are allowed
- */
-declare type EonReactiveProps<T> = { children?: any } & {
-  [P in keyof T]: (handler: (value: T[P]) => void) => T[P];
 }
 /**
  * no reactions are allowed for those props

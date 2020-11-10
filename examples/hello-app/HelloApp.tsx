@@ -1,8 +1,8 @@
 import AnotherComponent, { VMC as AnVMC } from "./AnotherComponent.tsx";
-export default function (this: VMC, props: EonReactiveProps<{ message: string }>) {
+export default function (this: VMC) {
   return (<template>
     <style>{
-      `.container {
+      /*css*/`.container {
           color: red;
         }
       `}</style>
@@ -13,7 +13,11 @@ export default function (this: VMC, props: EonReactiveProps<{ message: string }>
       <span class="span">
         {() => '> ' + Date.now()}
       </span>
+      <span class={() => this.newData.test.message}>
+        test on reactive attributes
+      </span>
     </div>
+    <AnotherComponent test={() => this.newData.test.message} />
   </template>)
 }
 
