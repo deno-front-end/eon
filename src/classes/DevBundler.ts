@@ -31,10 +31,10 @@ export default class DevBundler extends Utils {
       <html>
         <head>
           ${style}
-          ${script}
-        </head>
-        <body>
+          </head>
+          <body>
           ${body}
+          ${script}
         </body>
       </html>`;
     return {
@@ -45,7 +45,9 @@ export default class DevBundler extends Utils {
     };
   }
   protected static async buildScriptSPA(): Promise<string> {
-    let app: string = `/** Eon application compiled */\n`;
+    let app: string = `/** Eon application compiled */
+      import { reactive, crt, app, att, add } from '${new URL('../functions/runtime.ts', import.meta.url).pathname}';
+    `;
     const files: string[] = [];
     // first get all available components
     const components: EonComponent[] = EonComponentRegistry.collection.map(([key, component]) => component);

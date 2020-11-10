@@ -33,7 +33,7 @@ export class EonApplication {
    * @param root {string} path to the root component
    * @param registry {string} all the components used in the application
    */
-  static async dev(root: string, registry: string[]): Promise<EonComponent[]> {
+  static async dev(root: string): Promise<EonComponent[]> {
     const components = await EonApplication.getComponents({
       entrypoint: root,
     });
@@ -46,5 +46,5 @@ export class EonApplication {
   }
 }
 
-await EonApplication.dev('./examples/hello-app/HelloApp.tsx', [])
+await EonApplication.dev('./examples/hello-app/HelloApp.tsx');
 

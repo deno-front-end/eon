@@ -1,15 +1,11 @@
 // @ts-ignore
 export default function (this: VMC, props: EonReactiveProps<{ message: string; test: string; map: Map<string, string> }>) {
   return (<template>
-   {(/*for*/number, i, arr = this.array) =>
-        <div>
-          {() => `Hello ${number} ${i}`}
-        </div>
-      }
   </template>)
 }
 export class VMC {
-  message: string = '';
-  // @ts-ignore
-  array: number[] = Array.from(new Array(2000));
+  public message = 'Hello World overwritten';
+  static updated(this: VMC) {
+    this.message = 'Im updated';
+  }
 }

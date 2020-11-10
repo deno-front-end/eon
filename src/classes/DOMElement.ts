@@ -211,7 +211,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
        * one for the component element: document.createElement('my-component')
        * one for props function
        */
-      return `${this.uuid} = document.createElement('${this.component.dataUuidForSPA}');
+      return `${this.uuid} = crt('${this.component.dataUuidForSPA}');
         ${this.uuid}_props = (() => ({}))`;
     }
     if (this.isArrowIterationFunction) {
@@ -219,19 +219,19 @@ export default class DOMElement extends Utils implements DOMElementInterface {
        * the eon-list element will wrap the list
        * this allows a better list management
        */
-      return `${this.uuid} = document.createElement('eon-list');`;
+      return `${this.uuid} = crt('eon-list');`;
     }
-    return `${this.uuid} = document.createElement${this.isInSVG ? 'NS' : ''}('${this.name}');`;
+    return `${this.uuid} = crt('${this.name}', ${this.isInSVG});`;
   }
   get appendChildSPA(): string | undefined {
     if (this.nodeType && [11].includes(this.nodeType) || this.isBoundAttribute) {
       return undefined;
     }
     if (this.nodeType === 2 && this.parent && !this.parent.isTemplate) {
-      return `${this.parent.uuid}.setAttribute('${this.name}', '${this.value}');`
+      return `att(${this.parent.uuid}, '${this.name}', '${this.value}');`
     }
     if (this.parent && this.parent.parent || this.parent && this.parent.isTemplate) {
-      return `${this.parent.uuid}.append(${this.uuid});`;
+      return `app(${this.parent.uuid}, ${this.uuid});`;
     }
   }
   get updateSPA(): string | undefined {

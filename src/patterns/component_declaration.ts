@@ -1,7 +1,8 @@
 // @ts-nocheck
 function component_ctx() {
   "{{ element_vars /** let n1, n2; */ }}"
-  let component = "{{ vmc_instantiate }}";
+  // reactive function will be imported
+  let component = reactive("{{ vmc_instantiate }}", update);
   // all render iteration functions
   "{{ iterations_declarations }}"
   /* will assign all the nodes inside vars*/
@@ -44,22 +45,31 @@ function component_ctx() {
       "{{ vmc_name }}".destroyed.bind(component)(component);
     }
   }
+  function connected() {
+    if ("{{ vmc_name }}".connected) {
+      "{{ vmc_name }}".connected.bind(component)(component);
+    }
+  }
   return {
     component,
     init: init.bind(component),
     update: update.bind(component),
-    destroy: destroy.bind(component)
+    destroy: destroy.bind(component),
+    connected: connected.bind(component),
   }
 }
 customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
   static VMC = "{{ vmc_name }}";
   constructor() {
     super();
-    const { init, update, destroy, component } = component_ctx();
+    const { init, update, destroy, component, connected } = component_ctx();
     let template = init();
     // @ts-ignore
-    let templateContent = template.content;
     this.component = component;
+    /**
+     * set all the lifecycle
+     */
+    this.connected = connected;
     this.update = update;
     this.destroy = destroy;
     if ("{{ vmc_name }}".props) {
@@ -70,6 +80,7 @@ customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
   }
 
   connectedCallback() {
-    this.update();
+    this.connected && this.connected();
+    this.update && this.update();
   }
 });

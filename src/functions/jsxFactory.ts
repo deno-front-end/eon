@@ -52,7 +52,7 @@ export function h(...args: JSXFactory) {
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
-    children.forEach((child: unknown) => {
+    children.flat().forEach((child: unknown) => {
       let domelement: DOMElement;
       if (child instanceof DOMElement) {
         child.setParent(element);
