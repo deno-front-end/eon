@@ -3,6 +3,14 @@ function component_ctx() {
   "{{ element_vars /** let n1, n2; */ }}"
   // reactive function will be imported
   let component = reactive("{{ vmc_instantiate }}", update);
+  /**
+   * all lifeCycle of the component
+   */
+  const connected = "{{ vmc_name }}".connected && "{{ vmc_name }}".connected.bind(component);
+  const beforeUpdate = "{{ vmc_name }}".beforeUpdate && "{{ vmc_name }}".beforeUpdate.bind(component);
+  const updated = "{{ vmc_name }}".updated && "{{ vmc_name }}".updated.bind(component);
+  const beforeDestroy = "{{ vmc_name }}".beforedDstroy && "{{ vmc_name }}".beforedDstroy.bind(component);
+  const destroyed = "{{ vmc_name }}".destroyed && "{{ vmc_name }}".destroyed.bind(component);
   // all render iteration functions
   "{{ iterations_declarations }}"
   /* will assign all the nodes inside vars*/
@@ -15,8 +23,8 @@ function component_ctx() {
   }
   /* general updates */
   function update() {
-    if ("{{ vmc_name }}".beforeUpdate) {
-      "{{ vmc_name }}".beforeUpdate.bind(component)(component);
+    if (beforeUpdate) {
+      beforeUpdate(component);
     }
     // all update of bound textnodes
     "{{ bound_textnodes_updates }}"
@@ -27,27 +35,27 @@ function component_ctx() {
     // call the functions that render the first iterations
     // first iterations has no iteration ancestors
     "{{ iterations_call }}"
-    if ("{{ vmc_name }}".updated) {
-      "{{ vmc_name }}".updated.bind(component)(component);
+    if (updated) {
+      updated(component);
     }
   }
   /** when the component is destroyed */
   function destroy() {
     // before we destroy all the elements
-    if ("{{ vmc_name }}".beforeDestroy) {
-      "{{ vmc_name }}".beforeDestroy.bind(component)(component);
+    if (beforeDestroy) {
+      beforeDestroy(component);
     }
     // all elements destructions
     // element.remove();
     "{{ element_destructions }}"
     // finally destroyed component
-    if ("{{ vmc_name }}".destroyed) {
-      "{{ vmc_name }}".destroyed.bind(component)(component);
+    if (destroyed) {
+      destroyed(component);
     }
   }
-  function connected() {
-    if ("{{ vmc_name }}".connected) {
-      "{{ vmc_name }}".connected.bind(component)(component);
+  function connectedFn() {
+    if (connected) {
+      connected(component);
     }
   }
   return {
@@ -55,7 +63,7 @@ function component_ctx() {
     init: init.bind(component),
     update: update.bind(component),
     destroy: destroy.bind(component),
-    connected: connected.bind(component),
+    connected: connectedFn.bind(component),
   }
 }
 customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
