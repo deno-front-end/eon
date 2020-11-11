@@ -84,7 +84,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
     this.component = component;
     this.id = increment();
     this.isArrowIterationFunction = isArrowIterationFunction;
-    this.date = date || Date.now();
+    this.date = date || performance.now();
     DOMElementRegistry.subscribe(this.uuid, this);
   }
   get uuid(): string {
@@ -323,15 +323,22 @@ export default class DOMElement extends Utils implements DOMElementInterface {
   }
   get iterationBodySPA() {
     const infos = this.isArrowIterationFunction;
-    if (!infos || !this.children.length) return '';
-    let childs_declarations = `let ${this.children
+    const descendants = this.descendants;
+    if (!infos || !descendants.length) return '';
+    let childs_declarations = `let ${descendants
       .map((domelement) => domelement.declarationSPA)
       .join(',\n')};`;
-    let childs_appends = this.children
+    let childs_appends = descendants
       .map((domelement) => domelement.appendChildSPA)
       .join('\n');
-    let childs_assignments = this.children
+    let childs_assignments = descendants
       .map((domelement) => domelement.assignementSPA)
+      .join('\n');
+    let childs_update = descendants
+      .map((domelement) => domelement.updateSPA)
+      .join('\n')
+    let childs_reassignment = this.children
+      .map((domelement) => domelement.getReassignmentFromArraySPA(infos as DOMElementDescription))
       .join('\n');
     const body = Utils.renderPattern(Patterns.forDirectivePattern, {
       data: {
@@ -344,17 +351,34 @@ export default class DOMElement extends Utils implements DOMElementInterface {
         childs_declarations,
         childs_appends,
         childs_assignments,
+        childs_update,
         childs_set_attributes: '',
         childs_add_event_listener: '',
-        childs_update: '',
-        childs_reassignment: '',
+        childs_reassignment,
       }
     });
     return body;
+  }
+  getReassignmentFromArraySPA(infos: DOMElementDescription): string {
+    if (this.nodeType === 1) {
+      return `${this.uuid} = ${infos.array}[${infos.index}];`
+    }
+    return '';
   }
   get iterationDeclaration() {
     return `const ${this.renderIterationFunctionName} =  (function() {
       ${this.iterationBodySPA}
     }).bind(component)`;
+  }
+  get descendants(): DOMElement[] {
+    const descendants: DOMElement[] = [];
+    function recursive_children(children: DOMElement[]) {
+      children.forEach((d) => {
+        descendants.push(d);
+        recursive_children(d.children);
+      });
+    }
+    recursive_children(this.children);
+    return descendants;
   }
 }

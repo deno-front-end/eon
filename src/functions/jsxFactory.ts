@@ -52,8 +52,11 @@ export function h(...args: JSXFactory) {
     children: [],
     component,
     attributes,
-    date: Date.now(),
+    date: performance.now(),
   });
+  if (attributes) {
+    setAttributes(element, attributes);
+  }
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
@@ -62,19 +65,21 @@ export function h(...args: JSXFactory) {
       if (child instanceof DOMElement) {
         child.setParent(element);
         element.setChild(child);
-        child.date = Date.now();
+        child.date = performance.now();
       } else {
         domelement = new DOMElement({
           value: child,
           children: [],
-          date: Date.now(),
+          date: performance.now(),
         })
         const isArrowIterationFunction: DOMElementDescription | null = DOMElementDescriber.getArrowFunctionDescription(child as any);
         if (isArrowIterationFunction) {
           // save the arrow iteration informations
           domelement.isArrowIterationFunction = isArrowIterationFunction;
           // need to use the arrow function, to get the child domelement
+          console.warn((child as () => DOMElement).toString());
           const newChild = (child as () => DOMElement)() as (DOMElement);
+          console.warn(newChild.children);
           // set child and set parent
           domelement.setChild(newChild);
           newChild.setParent(domelement);
@@ -93,9 +98,6 @@ export function h(...args: JSXFactory) {
         element.setChild(domelement);
       }
     });
-  }
-  if (attributes) {
-    setAttributes(element, attributes);
   }
   if (typeof tag === 'function' && tag.name === 'hf') {
     element.nodeType = 11;

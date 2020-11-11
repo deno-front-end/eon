@@ -15,7 +15,9 @@ export function reactive(target, updateFunction, parentKey = '') {
     get(obj, key) {
       let v;
       const id = `${parentKey}.${key.toString()}`;
-      if (obj[key] instanceof Object && !proxies[id]) {
+      if (key === 'prototype') {
+        v = Reflect.get(...arguments)
+      } else if (obj[key] instanceof Object && !proxies[id]) {
         v = reactive(obj[key], updateFunction, id);
         proxies[id] = v;
       } else if (proxies[id]) {

@@ -21,7 +21,11 @@ export default function(this: VMC) {
     `}</style>
     <div class="container">
       <h1>Todo List App</h1>
-      {(todo, index, arr = this.list) => <TodoList todo={() => todo}></TodoList>}
+      {(todo, index, arr = this.list) => <TodoList todo={() => todo}>
+          <div>
+            test slot
+          </div>
+        </TodoList>}
       <TodoListForm></TodoListForm>
     </div>
   </template>)
@@ -39,12 +43,13 @@ export class VMC {
     },
   ];
   static connected(this: VMC) {
-    setTimeout(() => {
+    setInterval(() => {
       this.ThemeTodoList.grey = 'red';
       this.list.push({
         active: false,
         value: 'test3',
       })
-    }, 5000);
+      setTimeout(() => this.list.splice(0), 200);
+    }, 2000);
   }
 }
