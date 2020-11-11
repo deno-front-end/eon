@@ -45,6 +45,3 @@ export class EonApplication {
     return components;
   }
 }
-
-await EonApplication.dev('./examples/hello-app/HelloApp.tsx');
-
