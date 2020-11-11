@@ -7,6 +7,7 @@ export default function(this: VMC, props: Props) {
   return (<template>
     <div class={() => `container ${this.todo.active ? 'active' : ''}`}>
       <div class="state"></div>
+      <slot></slot>
       <div>{() => this.todo.value}</div>
     </div>
   </template>)

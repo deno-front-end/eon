@@ -5,11 +5,29 @@ import { ModuleErrors } from './ModuleErrors.ts';
 import DOMElementRegistry from './DOMElementRegistry.ts';
 import Patterns from './Patterns.ts';
 import { v4 } from '../../deps.ts';
+import EonSandBox from './EonSandBox/EonSandBox.ts';
+
 
 type EonApplication = {
+  /**
+   * script part of the page,
+   * outerHTML of a script element,
+   * containing the main script of the application
+   */
   script: string;
+  /**
+   * global style of the application,
+   * outerHTML of a style element
+   */
   style: string;
+  /**
+   * only contains the tag of the root-component
+   */
   body: string;
+  /**
+   * the string sent to the client,
+   * contains the page of the application
+   */
   dom: string;
 };
 
@@ -61,8 +79,8 @@ export default class DevBundler extends Utils {
         const vmcName = `VMC${i}______${i}`;
         // save the new string into the files used by Deno.bundle
         const file = this.createMirrorEsmFile(component, vmcName);
-        Deno.writeTextFileSync(newPath, file);
-        files.push(newPath);
+        const esmSandBoxPath = EonSandBox.addFile(newPath, file);
+        files.push(esmSandBoxPath);
         if (component.VMC) {
           app += `\n/** Eon harmony import */\nimport { VMC as ${vmcName} } from '${component.sourcePath}';`;
         }
@@ -71,15 +89,15 @@ export default class DevBundler extends Utils {
         }
       }
     });
-    Deno.writeTextFileSync(appPath, app);
-    const [, emit] = await Deno.bundle(`./${appPath}`, undefined, {
+    const appSandBoxPath = EonSandBox.addFile(appPath, app);
+    const [, emit] = await Deno.bundle(appSandBoxPath, undefined, {
       jsx: "react",
       jsxFactory: "h",
       // @ts-ignore
       jsxFragmentFactory: "hf",
       sourceMap: false,
     });
-    files.push(`./${appPath}`);
+    files.push(appSandBoxPath);
     files.forEach((file) => {
       Deno.removeSync(file);
     });

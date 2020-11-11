@@ -86,8 +86,8 @@ customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
     if ("{{ vmc_name }}".props) {
       this.props = "{{ vmc_name }}".props.bind(component);
     }
-    const shadowRoot = this.attachShadow({ mode: 'open' })
-      .append(...template.childNodes);
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.append(...template.childNodes);
   }
 
   connectedCallback() {

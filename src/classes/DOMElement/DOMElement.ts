@@ -1,5 +1,6 @@
 import DOMElementObject, { DOMElementInterface } from './DOMElementObject.ts';
 import DOMElementSPA from "./DOMElementSPA.ts";
+import DOMElementRegistry from '../DOMElementRegistry.ts';
 
 /**
  * class that participate to the DOM Tree description
@@ -7,11 +8,12 @@ import DOMElementSPA from "./DOMElementSPA.ts";
 export default class DOMElement extends DOMElementSPA {
   constructor(opts: DOMElementInterface) {
     super(opts);
+    DOMElementRegistry.subscribe(this.uuid, this);
   }
-  setParent(parent: DOMElementObject) {
+  setParent(parent: DOMElement) {
     this.parent = parent;
   }
-  setChild(child: DOMElementObject) {
+  setChild(child: DOMElement) {
     this.children.push(child);
   }
 }

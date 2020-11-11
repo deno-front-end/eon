@@ -85,7 +85,6 @@ export default class DOMElementObject extends Utils implements DOMElementInterfa
     this.id = increment();
     this.isArrowIterationFunction = isArrowIterationFunction;
     this.date = date || performance.now();
-    DOMElementRegistry.subscribe(this.uuid, this);
   }
   get uuid(): string {
     const idType = this.isBoundTextnode ? 'bt'

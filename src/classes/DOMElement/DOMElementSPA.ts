@@ -4,7 +4,8 @@ import Utils from '../Utils.ts';
 import DOMElementObject, { DOMElementInterface } from './DOMElementObject.ts';
 
 /**
- * class to get all Single Page Application utils related to the DOMElementObject
+ * class to get all Single Page Application's utils
+ * related to the DOMElementObject
  */
 export default class DOMElementSPA extends DOMElementObject {
   constructor(opts: DOMElementInterface) {

@@ -23,7 +23,7 @@ export default function(this: VMC) {
       <h1>Todo List App</h1>
       {(todo, index, arr = this.list) => <TodoList todo={() => todo}>
           <div>
-            test slot
+            {() => this.list.length.toString()}
           </div>
         </TodoList>}
       <TodoListForm></TodoListForm>

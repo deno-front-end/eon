@@ -83,11 +83,12 @@ export default class EonSandBoxFileSystem extends Utils {
   /**
    * add a file to the session
    */
-  static addFile(p: string, text: string) {
+  static addFile(p: string, text: string): string {
     try {
       const sandBoxPath = path.join(this.sandBoxLocation, p);
       Deno.writeTextFileSync(sandBoxPath, text);
       this.paths.push(sandBoxPath);
+      return sandBoxPath;
     } catch (err) {
       throw err;
     }
