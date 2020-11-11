@@ -13,11 +13,7 @@ export class EonApplication {
     const rootComponentPath = path.join(Deno.cwd(), opts.entrypoint);
     const components: EonComponent[] = [];
     for (let document of documents) {
-      const component = await ModuleResolver.resolve(document.module, opts);
-      if (document.sourcePath === rootComponentPath) {
-        component.isRootComponent = true;
-        component.isImported = true;
-      }
+      const component = await ModuleResolver.resolve(document.module, opts, document.sourcePath === rootComponentPath);
       component.sourcePath = document.sourcePath;
       component.file = document.importable;
       component.sandBoxPath = document.sandBoxPath;

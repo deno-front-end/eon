@@ -3,6 +3,7 @@ import DOMElement from '../classes/DOMElement.ts';
 import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
 import DOMElementDescriber from '../classes/DOMElementDescriber.ts';
 import type { DOMElementDescription } from '../classes/DOMElementDescriber.ts';
+import DOMElementRegistry from '../classes/DOMElementRegistry.ts';
 
 function setAttributes(element: DOMElement, attributes: Attributes) {
   // TODO directives inside attributes
@@ -19,7 +20,7 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
         parent: element,
         children: []
       }));
-      if (element.attributes && (key !== "useVMC" && element.name !== "template")) {
+      if (element.attributes) {
         delete element.attributes[key];
       }
       return;
@@ -51,10 +52,8 @@ export function h(...args: JSXFactory) {
     children: [],
     component,
     attributes,
+    date: Date.now(),
   });
-  if (attributes) {
-    setAttributes(element, attributes);
-  }
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
@@ -63,13 +62,14 @@ export function h(...args: JSXFactory) {
       if (child instanceof DOMElement) {
         child.setParent(element);
         element.setChild(child);
+        child.date = Date.now();
       } else {
         domelement = new DOMElement({
           value: child,
           children: [],
+          date: Date.now(),
         })
         const isArrowIterationFunction: DOMElementDescription | null = DOMElementDescriber.getArrowFunctionDescription(child as any);
-        domelement.setParent(element);
         if (isArrowIterationFunction) {
           // save the arrow iteration informations
           domelement.isArrowIterationFunction = isArrowIterationFunction;
@@ -89,9 +89,13 @@ export function h(...args: JSXFactory) {
         // TODO define what to do about objects
         // maybe we can think about a template switch with the objects
         // save the domelement
+        domelement.setParent(element);
         element.setChild(domelement);
       }
     });
+  }
+  if (attributes) {
+    setAttributes(element, attributes);
   }
   if (typeof tag === 'function' && tag.name === 'hf') {
     element.nodeType = 11;

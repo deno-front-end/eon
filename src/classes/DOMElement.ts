@@ -46,6 +46,10 @@ interface DOMElementInterface {
    * this is only parsed when the arrow function is an element's child
    */
   isArrowIterationFunction?: DOMElementDescription;
+  /**
+   * to sort the element, we need to assign them a date, using Date.now()
+   */
+  date?: number;
 }
 export default class DOMElement extends Utils implements DOMElementInterface {
   parent: DOMElementInterface['parent'];
@@ -56,6 +60,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
   attributes: DOMElementInterface['attributes'];
   component: DOMElementInterface['component'];
   isArrowIterationFunction: DOMElementInterface['isArrowIterationFunction'];
+  date: DOMElementInterface['date'];
   id?: number;
   constructor(opts: DOMElementInterface) {
     super();
@@ -68,6 +73,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
       attributes,
       component,
       isArrowIterationFunction,
+      date = 0,
     } = opts;
     this.nodeType = nodeType;
     this.parent = parent;
@@ -78,6 +84,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
     this.component = component;
     this.id = increment();
     this.isArrowIterationFunction = isArrowIterationFunction;
+    this.date = date || Date.now();
     DOMElementRegistry.subscribe(this.uuid, this);
   }
   get uuid(): string {

@@ -33,8 +33,8 @@ export default class DOMElementDescriber extends Utils {
     syntax: "typescript"
   };
   /**
-   * only uses arrow functions
-   * need to know if the function is a iteration
+   * only uses arrow functions,
+   * need to know if the function is an iteration,
    * typically this happens when the function has three parameters,
    * first is the currentValue,
    * second is the index,

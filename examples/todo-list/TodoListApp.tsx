@@ -35,7 +35,7 @@ export class VMC {
     },
     {
       value: 'test2',
-      active: true
+      active: false
     },
   ];
   static connected(this: VMC) {

@@ -5,7 +5,7 @@ import { v4 } from '../../deps.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 
 export default abstract class ModuleResolver {
-  static async resolve(module: EonModule, opts: ModuleGetterOptions): Promise<EonComponent> {
+  static async resolve(module: EonModule, opts: ModuleGetterOptions, isRootComponent: boolean = false): Promise<EonComponent> {
     const { entrypoint } = opts;
     // get the default DOM Graph
     // for this we use the default export or the export named template
@@ -20,6 +20,8 @@ export default abstract class ModuleResolver {
       templateFactory: module.default,
       VMC,
     });
+    component.isRootComponent = isRootComponent;
+    component.isImported = isRootComponent;
     return component;
   }
   /**

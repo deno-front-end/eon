@@ -1,13 +1,18 @@
 import EonComponent from './EonComponent.ts';
 import DOMElement from './DOMElement.ts';
 /**
- * class to get all each rendering of elements
+ * class to get all rendering of elements
  * should differ if it's for SPA/SSR/SSG
  */
 export default class DOMElementRenderer {
   protected static registry: Map<string, DOMElement> = new Map();
   static get collection(): DOMElement[] {
-    return Array.from(this.registry.entries()).map(([key, domelement]) => domelement);
+    return Array.from(this.registry.entries())
+      .map(([key, domelement]) => domelement)
+      /**
+       * need to sort by the assigned date because some domelements are instantiated before the precedent domelement
+       */
+      .sort((a: DOMElement, b: DOMElement) => a.date !== undefined && b.date !== undefined && a.date - b.date || 1);
   }
   public static getVarsSPA(component: EonComponent) {
     const collection = DOMElementRenderer.getElementsOfComponent(component.uuid as string);
