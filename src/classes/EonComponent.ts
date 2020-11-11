@@ -1,4 +1,4 @@
-import DOMElement from './DOMElement.ts';
+import DOMElement from './DOMElement/DOMElement.ts';
 import type { EonModule } from './EonModule.ts';
 import EonComponentRegistry from './EonComponentRegistry.ts';
 

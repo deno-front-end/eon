@@ -4,8 +4,3 @@ so basically if Deno is running in `/home/app`, Eon SandBox will create `/home/.
 
 all the files, excepted `tsconfig.json | .git/* | .vscode/* | node_modules/*` are copied into this sandbox.
 this sandbox allows a better resolution of the imported components.
-
-## TODO
-
-TODO support `--watch` argument, all the restarts should be handled by the sandbox
-TODO watch changes in tsx/jsx files

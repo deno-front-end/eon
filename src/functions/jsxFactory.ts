@@ -1,5 +1,5 @@
 import type { JSXFactory, JSXFragmentFactory, Attributes } from '../../types.d.ts';
-import DOMElement from '../classes/DOMElement.ts';
+import DOMElement from '../classes/DOMElement/DOMElement.ts';
 import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
 import DOMElementDescriber from '../classes/DOMElementDescriber.ts';
 import type { DOMElementDescription } from '../classes/DOMElementDescriber.ts';

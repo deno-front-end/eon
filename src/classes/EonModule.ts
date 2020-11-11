@@ -1,4 +1,4 @@
-import DOMElement from './DOMElement.ts';
+import DOMElement from './DOMElement/DOMElement.ts';
 export interface EonModule {
   /**
    * when the end user provide

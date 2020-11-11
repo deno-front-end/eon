@@ -1,4 +1,4 @@
-import EonComponent from './EonComponent.ts';
+import EonComponent from '../EonComponent.ts';
 import DOMElement from './DOMElement.ts';
 /**
  * class to get all rendering of elements
