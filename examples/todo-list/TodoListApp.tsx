@@ -5,16 +5,19 @@ import ThemeTodoList from './ThemeTodoList.ts';
 
 export default function(this: VMC) {
   return (<template>
-    <style>{/*css*/`
-    .container {
-      background: white;
-      margin: auto;
-      width: 500px;
-      height: 500px;
-      border-radius: 3%;
-      padding: 10px;
-      border: 1px solid ${ThemeTodoList.grey};
-    }
+    <style>{`
+      h1 {
+        color: ${this.ThemeTodoList.grey};
+      }
+      .container {
+        background: white;
+        margin: auto;
+        width: 500px;
+        height: 500px;
+        border-radius: 3%;
+        padding: 10px;
+        border: 1px solid ${this.ThemeTodoList.grey};
+      }
     `}</style>
     <div class="container">
       <h1>Todo List App</h1>
@@ -24,10 +27,24 @@ export default function(this: VMC) {
   </template>)
 }
 export class VMC {
+  ThemeTodoList = ThemeTodoList;
   list: Todo[] = [
     {
       value: 'test',
       active: true
     },
-  ]
+    {
+      value: 'test2',
+      active: true
+    },
+  ];
+  static connected(this: VMC) {
+    setTimeout(() => {
+      this.ThemeTodoList.grey = 'red';
+      this.list.push({
+        active: false,
+        value: 'test3',
+      })
+    }, 5000);
+  }
 }

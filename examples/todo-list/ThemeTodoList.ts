@@ -1,3 +1,3 @@
 export default {
-  grey: '#e4e4e4',
+  grey: '#333',
 };

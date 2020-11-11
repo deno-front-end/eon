@@ -18,6 +18,9 @@ function component_ctx() {
     "{{ element_assignments }}"
     // append childs - attributes will use set attribute
     "{{ element_parent_append_childs /** parent.append(...childs) */ }}"
+    // call the functions that render the first iterations
+    // first iterations has no iteration ancestors
+    "{{ iterations_call }}"
     // should return the root template
     "{{ return_root_template }}"
   }

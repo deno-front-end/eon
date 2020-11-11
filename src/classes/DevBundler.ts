@@ -56,7 +56,7 @@ export default class DevBundler extends Utils {
     // the string should return a Eon Component Declaration Pattern
     // file://doc/PATTERN_COMPONENT.md
     components.forEach((component: EonComponent, i: number) => {
-      if (component.file) {
+      if (component.file && component.isImported) {
         const newPath = `${component.uuid}.ts`;
         const vmcName = `VMC${i}______${i}`;
         // save the new string into the files used by Deno.bundle

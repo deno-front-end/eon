@@ -39,6 +39,12 @@ function setAttributes(element: DOMElement, attributes: Attributes) {
 export function h(...args: JSXFactory) {
   const [tag, attributes, ...children] = args;
   const component = EonComponentRegistry.getItemByTemplate(tag);
+  if (component) {
+    /**
+     * if the component exists we can render it by setting isImported to true
+     */
+    component.isImported = true;
+  }
   const element = new DOMElement({
     name: tag && tag.name ? tag.name : tag.toString(),
     nodeType: 1,

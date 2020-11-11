@@ -24,7 +24,7 @@ declare namespace JSX {
   }
   /** style elements should only accept strings as chlidren  */
   export interface StyleElement extends Element {
-    children: string;
+    children: string | (() => string);
   }
   export interface ElementAttributesProperty {
     props: Object; // specify the property name to use

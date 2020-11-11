@@ -16,6 +16,7 @@ export class EonApplication {
       const component = await ModuleResolver.resolve(document.module, opts);
       if (document.sourcePath === rootComponentPath) {
         component.isRootComponent = true;
+        component.isImported = true;
       }
       component.sourcePath = document.sourcePath;
       component.file = document.importable;

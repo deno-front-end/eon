@@ -26,7 +26,7 @@ export default abstract class EonComponentRegistry {
   }
   static getItemByUrl(url: string): EonComponent | undefined {
     const entries = Array.from(this.registry.entries());
-    const found = entries.find(([key, component]) => component.file === url);
+    const found = entries.find(([key, component]) => component.sourcePath === url);
     if (found) {
       const [, component] = found;
       return component;

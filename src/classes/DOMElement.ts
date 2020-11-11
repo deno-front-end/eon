@@ -229,7 +229,7 @@ export default class DOMElement extends Utils implements DOMElementInterface {
        * the eon-list element will wrap the list
        * this allows a better list management
        */
-      return `${this.uuid} = crt('eon-list');`;
+      return `${this.uuid} = crt('eon-list', ${this.isInSVG});`;
     }
     if (this.nodeType && [11, 2].includes(this.nodeType)) {
       return undefined;

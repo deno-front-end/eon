@@ -1,6 +1,8 @@
 import { path, fs, colors } from "../../../deps.ts";
 import { ModuleErrors } from "../ModuleErrors.ts";
 import Utils from "../Utils.ts";
+import EonComponentRegistry from '../EonComponentRegistry.ts';
+
 
 export interface EonSandBoxDocument {
   /**
@@ -142,7 +144,15 @@ export default class EonSandBoxFileSystem extends Utils {
   static async typecheckSession(): Promise<void> {
     const { gray, green, white, red } = colors;
     let diagnostics: unknown[] = []
-    let documents = Array.from(this.mapFiles.entries()).map(([, document]) => document);
+    let documents = Array.from(this.mapFiles.entries())
+      .map(([, document]) => document)
+      .filter((document) => {
+        /**
+         * typecheck only the used component
+         */
+        const component = EonComponentRegistry.getItemByUrl(document.sourcePath);
+        return component && component.isImported;
+      });
     // log type checking
     this.message(gray('Type checking the current working directory'));
     for await( let document of documents) {

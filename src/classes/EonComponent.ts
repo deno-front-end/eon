@@ -21,6 +21,8 @@ export interface EonComponentInterface {
   templateFactory: EonModule['default'];
   /** if the component is the first component */
   isRootComponent?: boolean;
+  /** if the component is imported into the application */
+  isImported?: boolean;
 }
 export default class EonComponent implements EonComponentInterface {
   uuid: EonComponentInterface['uuid'];
@@ -31,6 +33,7 @@ export default class EonComponent implements EonComponentInterface {
   template: EonComponentInterface['template'];
   VMC: EonComponentInterface['VMC'];
   isRootComponent: EonComponentInterface['isRootComponent'] = false;
+  isImported: EonComponentInterface['isImported'] = false;
   templateFactory: EonComponentInterface['templateFactory'];
   constructor(opts: EonComponentInterface) {
     const {
