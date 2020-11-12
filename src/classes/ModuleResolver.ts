@@ -5,6 +5,7 @@ import { v4 } from '../../deps.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 
 export default abstract class ModuleResolver {
+  static currentComponent: EonComponent | null = null;
   static async resolve(module: EonModule, opts: ModuleGetterOptions, isRootComponent: boolean = false): Promise<EonComponent> {
     const { entrypoint } = opts;
     // get the default DOM Graph
@@ -29,6 +30,7 @@ export default abstract class ModuleResolver {
    */
   static setComponentTemplate(component: EonComponent): boolean {
     const { VMC } = component;
+    ModuleResolver.currentComponent = component;
     const vm = VMC ? new (VMC as FunctionConstructor)() : undefined;
     const availableTemplate = component.templateFactory;
     const defaultTemplate =

@@ -63,7 +63,6 @@ export default class DOMElementDescriber extends Utils {
       // @ts-ignore
       const { params } = ast.body[0].expression
       // @ts-ignore
-      console.warn(ast.body[0].expression);
       const [currentValueInfos, indexInfos, arrayInfos] = params;
       if (currentValueInfos
         && indexInfos

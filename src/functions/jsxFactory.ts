@@ -1,9 +1,11 @@
 import type { JSXFactory, JSXFragmentFactory, Attributes } from '../../types.d.ts';
+import { colors } from '../../deps.ts';
 import DOMElement from '../classes/DOMElement/DOMElement.ts';
 import EonComponentRegistry from '../classes/EonComponentRegistry.ts';
 import DOMElementDescriber from '../classes/DOMElementDescriber.ts';
 import type { DOMElementDescription } from '../classes/DOMElementDescriber.ts';
 import DOMElementRegistry from '../classes/DOMElementRegistry.ts';
+import ModuleResolver from '../classes/ModuleResolver.ts';
 
 function setAttributes(element: DOMElement, attributes: Attributes) {
   // TODO directives inside attributes
@@ -65,7 +67,7 @@ export function h(...args: JSXFactory) {
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
-    children.flat().forEach((child: unknown) => {
+    children.flat().forEach((child: unknown, i: number, arr: unknown[]) => {
       let domelement: DOMElement;
       if (child instanceof DOMElement) {
         child.setParent(element);
@@ -82,10 +84,18 @@ export function h(...args: JSXFactory) {
           // save the arrow iteration informations
           domelement.isArrowIterationFunction = isArrowIterationFunction;
           // need to use the arrow function, to get the child domelement
-          const newChild = (child as (el: unknown, i: number, arr: unknown[]) => DOMElement)({}, 1, []) as (DOMElement);
-          // set child and set parent
-          domelement.setChild(newChild);
-          newChild.setParent(domelement);
+          try {
+            //
+            const newChild = (child as (el: unknown, i: number, arr: unknown[]) => DOMElement)(void 0, 0, []) as (DOMElement);
+            // set child and set parent
+            domelement.setChild(newChild);
+            newChild.setParent(domelement);
+          } catch (err) {
+            const component = ModuleResolver.currentComponent;
+            const { red, white, gray } = colors
+            console.error(red(`[Eon] error in component: ${component?.sourcePath}\n\nContext error, please note that all values are undefined during context analyze.\n${gray(err.stack)}`));
+            Deno.exit(1);
+          }
         } else if (child && typeof child === 'string'
           || child === null
           || typeof child === 'boolean'

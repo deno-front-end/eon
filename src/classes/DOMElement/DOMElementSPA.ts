@@ -188,9 +188,11 @@ export default class DOMElementSPA extends DOMElementObject {
     const descendants = this.descendantsUntilNewContext as DOMElementSPA[];
     if (!infos || !descendants.length) return '';
     let childs_declarations = `let ${descendants
+      .filter((domelement) => domelement.declarationSPA)
       .map((domelement) => domelement.declarationSPA)
       .join(',\n')};`;
     let childs_appends = descendants
+      .filter((domelement) => domelement.appendChildSPA)
       .map((domelement) => domelement.appendChildSPA)
       .join('\n');
     let childs_assignments = descendants.slice()

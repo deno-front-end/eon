@@ -1,6 +1,7 @@
 import DOMElement from './DOMElement/DOMElement.ts';
 import type { EonModule } from './EonModule.ts';
 import EonComponentRegistry from './EonComponentRegistry.ts';
+import ModuleResolver from "./ModuleResolver.ts";
 
 export interface EonComponentInterface {
   /** uuid */
@@ -23,6 +24,10 @@ export interface EonComponentInterface {
   isRootComponent?: boolean;
   /** if the component is imported into the application */
   isImported?: boolean;
+  /**
+   * all used components inside the current component
+   */
+  imports?: EonComponent[];
 }
 export default class EonComponent implements EonComponentInterface {
   uuid: EonComponentInterface['uuid'];
@@ -35,6 +40,7 @@ export default class EonComponent implements EonComponentInterface {
   isRootComponent: EonComponentInterface['isRootComponent'] = false;
   isImported: EonComponentInterface['isImported'] = false;
   templateFactory: EonComponentInterface['templateFactory'];
+  imports: EonComponentInterface['imports'];
   constructor(opts: EonComponentInterface) {
     const {
       file,
@@ -42,7 +48,8 @@ export default class EonComponent implements EonComponentInterface {
       template,
       VMC,
       templateFactory,
-      name
+      name,
+      imports,
     } = opts;
     this.file = file;
     this.uuid = uuid;
@@ -52,6 +59,10 @@ export default class EonComponent implements EonComponentInterface {
     this.templateFactory = templateFactory;
     if (this.uuid) {
       EonComponentRegistry.subscribe(this.uuid, this);
+    }
+    this.imports =  imports || [];
+    if (ModuleResolver.currentComponent && ModuleResolver.currentComponent.imports) {
+      ModuleResolver.currentComponent.imports.push(this);
     }
   }
   /**
