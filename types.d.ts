@@ -1,6 +1,7 @@
 /** bind this part of the graph */
 declare type BoundValue = (() => string)
   | (() => JSX.IntrinsicElements[])
+  | (() => JSX.Element[])
   | ((currentValue: any, index: any, array?: any[]) => JSX.Element)
   | string
   | number

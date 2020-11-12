@@ -38,15 +38,15 @@ export default function(this: VMC) {
         done {() => this.list.filter((c) => !c.active).length},
       </div>
       <div class="todos">
-        {(todo: Todo, i: number, arr = this.list) =>
+        {() => this.list.map((todo: Todo, i: number) =>
           <TodoListRow todo={() => todo}>
             <span>
               {() => i} {' -  '}
             </span>
             <div slot="issues">
-             {(issue, j, arr2 = todo.issues) => <div>{issue}</div>}
+             {() => todo.issues.map((issue, j) => <div>{issue}</div>)}
             </div>
-          </TodoListRow>
+          </TodoListRow>)
         }
       </div>
       <TodoListForm />
