@@ -1,32 +1,46 @@
 import TodoListForm from './TodoListForm.tsx';
-import TodoList from './TodoList.tsx';
-import type { Todo } from './TodoList.tsx';
+import TodoListRow from './TodoListRow.tsx';
+import type { Todo } from './TodoListRow.tsx';
 import ThemeTodoList from './ThemeTodoList.ts';
 
 export default function(this: VMC) {
   return (<template>
-    <style>{`
+    <style>{/*css*/`
       h1 {
         color: ${this.ThemeTodoList.grey};
       }
       .container {
+        display: table;
         background: white;
         margin: auto;
         width: 500px;
         height: 500px;
         border-radius: 3%;
+        border: 1px solid ${this.ThemeTodoList.border};
+      }
+      .container > * {
         padding: 10px;
-        border: 1px solid ${this.ThemeTodoList.grey};
+      }
+      .todos {
+        height: 500px;
+        width: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: ${ThemeTodoList.lightGrey};
       }
     `}</style>
     <div class="container">
       <h1>Todo List App</h1>
-      {(todo, index, arr = this.list) => <TodoList todo={() => todo}>
-          <div>
-            {() => this.list.length.toString()}
-          </div>
-        </TodoList>}
-      <TodoListForm></TodoListForm>
+      <div class="todos">
+        {
+          (todo, index, arr = this.list) => <TodoListRow todo={() => todo}>
+            <div>
+              {() => this.list.length.toString()}
+            </div>
+          </TodoListRow>
+        }
+      </div>
+      <TodoListForm />
     </div>
   </template>)
 }
@@ -49,7 +63,7 @@ export class VMC {
         active: false,
         value: 'test3',
       })
-      setTimeout(() => this.list.splice(0), 200);
+      //setTimeout(() => this.list.splice(0), 200);
     }, 2000);
   }
 }

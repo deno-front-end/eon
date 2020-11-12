@@ -164,6 +164,9 @@ export default class DOMElementSPA extends DOMElementObject {
   get renderIterationFunctionNameSPA() {
     return `render_iteration_${this.uuid}`;
   }
+  get renderIterationSubscriberSPA() {
+    return `render_iteration_subscriber_${this.uuid}`;
+  }
   get iterationCall() {
     return `${this.renderIterationFunctionNameSPA}();`;
   }
@@ -183,9 +186,6 @@ export default class DOMElementSPA extends DOMElementObject {
     let childs_update = descendants
       .map((domelement) => domelement.updateSPA)
       .join('\n')
-    let childs_reassignment = this.children
-      .map((domelement) => domelement.getReassignmentFromArraySPA(infos as DOMElementDescription))
-      .join('\n');
     const body = Utils.renderPattern(Patterns.forDirectivePattern, {
       data: {
         array_value: infos.arrayValue,
@@ -194,13 +194,13 @@ export default class DOMElementSPA extends DOMElementObject {
         element_array_name: infos.array,
         element_wrapper: this.uuid,
         removal_index: `${this.uuid}_rm`,
+        wrapper_update_subscriber: this.renderIterationSubscriberSPA,
         childs_declarations,
         childs_appends,
         childs_assignments,
         childs_update,
         childs_set_attributes: '',
         childs_add_event_listener: '',
-        childs_reassignment,
       }
     });
     return body;
@@ -212,7 +212,9 @@ export default class DOMElementSPA extends DOMElementObject {
     return '';
   }
   get iterationDeclaration() {
-    return `const ${this.renderIterationFunctionNameSPA} =  (function() {
+    return `
+    const ${this.renderIterationSubscriberSPA} = [];
+    const ${this.renderIterationFunctionNameSPA} =  (function() {
       ${this.iterationBodySPA}
     }).bind(component)`;
   }

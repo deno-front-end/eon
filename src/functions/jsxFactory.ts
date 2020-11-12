@@ -77,9 +77,7 @@ export function h(...args: JSXFactory) {
           // save the arrow iteration informations
           domelement.isArrowIterationFunction = isArrowIterationFunction;
           // need to use the arrow function, to get the child domelement
-          console.warn((child as () => DOMElement).toString());
           const newChild = (child as () => DOMElement)() as (DOMElement);
-          console.warn(newChild.children);
           // set child and set parent
           domelement.setChild(newChild);
           newChild.setParent(domelement);

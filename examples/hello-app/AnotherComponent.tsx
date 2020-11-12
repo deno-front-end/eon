@@ -2,7 +2,7 @@
 export type AnProps = EonProps<{ test: string; }>;
 export default function (this: VMC, props: AnProps) {
   return (<template>
-    <style>{`div { color: blue }`}</style>
+    <style>{/*css*/`div { color: blue }`}</style>
     <div>
       test of props {() => this.test}
     </div>
