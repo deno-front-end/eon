@@ -73,7 +73,14 @@ export default class DevBundler extends Utils {
     // create a string for each components
     // the string should return a Eon Component Declaration Pattern
     // file://doc/PATTERN_COMPONENT.md
-    components.forEach((component: EonComponent, i: number) => {
+    components
+      .slice()
+      /**
+       * this avoid rootComponent to be rendered before depencies
+       * without reverse nested components will be the last components
+       */
+      .reverse()
+      .forEach((component: EonComponent, i: number) => {
       if (component.file && component.isImported) {
         const newPath = `${component.uuid}.ts`;
         const vmcName = `VMC${i}______${i}`;

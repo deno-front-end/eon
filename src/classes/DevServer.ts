@@ -9,7 +9,7 @@ function random(min: number, max: number): number {
   return Math.round(Math.random() * (max - min)) + min;
 }
 export default class DevServer extends DevBundler {
-  private static port: number = 3040;
+  private static port: number = 3041;
   private static HMRport: number = DevServer.port;
   private static hostname: string = 'localhost';
   /**

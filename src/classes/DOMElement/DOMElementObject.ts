@@ -1,7 +1,6 @@
 import Utils from '../Utils.ts';
 import EonComponent from '../EonComponent.ts';
 import { increment } from '../../functions/increment.ts';
-import DOMElementRegistry from '../DOMElementRegistry.ts';
 import type { DOMElementDescription } from '../DOMElementDescriber.ts';
 import DOMElement from "./DOMElement.ts";
 /**
@@ -167,6 +166,22 @@ export default class DOMElementObject extends Utils implements DOMElementInterfa
       children.forEach((d) => {
         descendants.push(d);
         recursive_children(d.children);
+      });
+    }
+    recursive_children(this.children);
+    return descendants;
+  }
+    /**
+   * returns all the descendants domelement until a new context is reached (ctx like a for directive)
+   */
+  get descendantsUntilNewContext(): DOMElementObject[] {
+    const descendants: DOMElementObject[] = [];
+    function recursive_children(children: DOMElementObject[]) {
+      children.forEach((d) => {
+        if (!d.isArrowIterationFunction) {
+          descendants.push(d);
+          recursive_children(d.children);
+        }
       });
     }
     recursive_children(this.children);

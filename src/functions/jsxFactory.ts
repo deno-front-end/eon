@@ -57,6 +57,11 @@ export function h(...args: JSXFactory) {
   if (attributes) {
     setAttributes(element, attributes);
   }
+  if (tag === hf) {
+    element.nodeType = 11;
+    element.name = undefined;
+    return hf(...children);
+  }
   // assign to the children the parent element
   // assign the nodeType to the children
   if (children.length) {
@@ -97,15 +102,32 @@ export function h(...args: JSXFactory) {
       }
     });
   }
-  if (typeof tag === 'function' && tag.name === 'hf') {
-    element.nodeType = 11;
-    element.name = undefined;
-  }
   return element;
 }
 /**
  * jsxFragmentFactory
  */
-export function hf(...args: JSXFragmentFactory) {
-  return args;
+export function hf(...children: JSXFragmentFactory): DOMElement[] {
+  const controls: DOMElement[] = []
+  children.flat().forEach((child: unknown, i: number, arr: any[]) => {
+    let domelement: DOMElement;
+    const isArrowIterationFunction: DOMElementDescription | null = DOMElementDescriber.getArrowFunctionDescription(child as any);
+    if (isArrowIterationFunction) {
+      domelement = new DOMElement({
+        value: child,
+        children: [],
+        date: performance.now(),
+      });
+      isArrowIterationFunction.wrapperName = typeof arr[i -1] === 'string' && arr[i -1] ? arr[i -1].trim() : undefined;
+      // save the arrow iteration informations
+      domelement.isArrowIterationFunction = isArrowIterationFunction;
+      // need to use the arrow function, to get the child domelement
+      const newChild = (child as () => DOMElement)() as (DOMElement);
+      // set child and set parent
+      domelement.setChild(newChild);
+      newChild.setParent(domelement);
+      controls.push(domelement);
+    }
+  });
+  return controls;
 }

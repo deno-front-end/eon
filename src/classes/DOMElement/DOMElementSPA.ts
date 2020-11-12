@@ -68,21 +68,33 @@ export default class DOMElementSPA extends DOMElementObject {
     }
     if (this.isComponent && this.component) {
       /**
+       * this allows the props to be evaluated when the initialization is done
+       */
+      const directEvaluatedProps = this.children
+        .filter((d) => d.isBoundAttribute)
+        .map((domelement) => `${domelement.name}: ${domelement.uuid}(component),`)
+        .join('\n')
+      /**
        * if the element is a component
        * it should use as vars
        * one for the component element: document.createElement('my-component')
        * one for props function
        */
       return `${this.uuid} = crt('${this.component.dataUuidForSPA}');
-      ${this.uuid}_props = {};
+      ${this.uuid}_props = {
+        ${directEvaluatedProps}
+      };
       `;
     }
     if (this.isArrowIterationFunction) {
+      const {
+        wrapperName = 'eon-list'
+      } = this.isArrowIterationFunction;
       /**
        * the eon-list element will wrap the list
        * this allows a better list management
        */
-      return `${this.uuid} = crt('eon-list', ${this.isInSVG});`;
+      return `${this.uuid} = crt('${wrapperName}', ${this.isInSVG});`;
     }
     if (this.nodeType && [11, 2].includes(this.nodeType)) {
       return undefined;
@@ -105,8 +117,9 @@ export default class DOMElementSPA extends DOMElementObject {
        * set the attribute at the init using the function to get the value
        */
       return `${this.uuid}_prev = ${this.uuid}(component);
-      if (${parentUuid}.component) {
-        ${parentUuid}.component['${this.name}'] = ${this.uuid}_prev
+      if (${parentUuid}_props) {
+        ${parentUuid}_props['${this.name}'] = ${this.uuid}_prev;
+        ${parentUuid} && ${parentUuid}.props && ${parentUuid}.props(${parentUuid}_props);
       }`;
     }
     if (this.nodeType === 2 && this.parent && !this.parent.isTemplate) {
@@ -136,7 +149,7 @@ export default class DOMElementSPA extends DOMElementObject {
        */
       return `
       ${this.uuid}_next = ${this.uuid}(component);
-      if (${this.uuid}_prev !== ${this.uuid}_next && ${parentUuid}_props) {
+      if (${this.uuid}_prev !== ${this.uuid}_next) {
         ${parentUuid}_props['${this.name}'] = ${this.uuid}_next;
         ${this.uuid}_prev = ${this.uuid}_next;
       }`
@@ -172,7 +185,7 @@ export default class DOMElementSPA extends DOMElementObject {
   }
   get iterationBodySPA() {
     const infos = this.isArrowIterationFunction;
-    const descendants = this.descendants as DOMElementSPA[];
+    const descendants = this.descendantsUntilNewContext as DOMElementSPA[];
     if (!infos || !descendants.length) return '';
     let childs_declarations = `let ${descendants
       .map((domelement) => domelement.declarationSPA)
@@ -180,11 +193,13 @@ export default class DOMElementSPA extends DOMElementObject {
     let childs_appends = descendants
       .map((domelement) => domelement.appendChildSPA)
       .join('\n');
-    let childs_assignments = descendants
+    let childs_assignments = descendants.slice()
+      .sort((b, a) => a && b && a.date && b.date && a.date - b.date || -1)
       .map((domelement) => domelement.assignementSPA)
       .join('\n');
-    let childs_update = descendants
-      .map((domelement) => domelement.updateSPA)
+    let childs_update = descendants.slice()
+    .sort((a, b) => a && b && a.date && b.date && a.date - b.date || -1)
+    .map((domelement) => domelement.updateSPA)
       .join('\n')
     const body = Utils.renderPattern(Patterns.forDirectivePattern, {
       data: {

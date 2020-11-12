@@ -7,6 +7,7 @@ export default function(this: VMC) {
   return (<template>
     <style>{/*css*/`
       h1 {
+        font-family: 'Helvetica Neue', sans-serif;
         color: ${this.ThemeTodoList.grey};
       }
       .container {
@@ -31,11 +32,19 @@ export default function(this: VMC) {
     `}</style>
     <div class="container">
       <h1>Todo List App</h1>
+      <div>
+        todos {() => this.list.length},
+        active {() => this.list.filter((c) => c.active).length},
+        done {() => this.list.filter((c) => !c.active).length},
+      </div>
       <div class="todos">
-        {
-          (todo, index, arr = this.list) => <TodoListRow todo={() => todo}>
-            <div>
-              {() => this.list.length.toString()}
+        {(todo: Todo, i: number, arr = this.list) =>
+          <TodoListRow todo={() => todo}>
+            <span>
+              {() => i} {' -  '}
+            </span>
+            <div slot="issues">
+             {(issue, j, arr2 = todo.issues) => <div>{issue}</div>}
             </div>
           </TodoListRow>
         }
@@ -49,21 +58,24 @@ export class VMC {
   list: Todo[] = [
     {
       value: 'test',
-      active: true
+      active: true,
+      issues: [1, 2, 3]
     },
     {
       value: 'test2',
-      active: false
+      active: false,
+      issues: [0],
     },
   ];
   static connected(this: VMC) {
     setInterval(() => {
       this.ThemeTodoList.grey = 'red';
       this.list.push({
-        active: false,
+        active: Math.random() > 0.5,
         value: 'test3',
+        issues: [],
       })
-      //setTimeout(() => this.list.splice(0), 200);
+      // setTimeout(() => this.list.splice(0), 200);
     }, 2000);
   }
 }

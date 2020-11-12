@@ -22,6 +22,10 @@ export interface DOMElementDescription {
    * the value assigned to the array by the end user
    */
   arrayValue: string;
+  /**
+  * tagname of the wrapper
+  */
+  wrapperName?: string;
 }
 /**
  * a class to parse special directives
@@ -62,12 +66,15 @@ export default class DOMElementDescriber extends Utils {
       if (currentValueInfos
         && indexInfos
         && arrayInfos
-        && currentValueInfos.type === "Identifier"
         && indexInfos.type === "Identifier"
         && arrayInfos.type === "AssignmentPattern") {
+          let elementName = func.slice(
+            currentValueInfos.span.start - ast.span.start,
+            currentValueInfos.span.end - ast.span.start,
+          )
           return {
             index: indexInfos.value,
-            currentValue: currentValueInfos.value,
+            currentValue: elementName,
             array: arrayInfos.left.value,
             arrayValue: func.slice(
               arrayInfos.right.span.start - ast.span.start,

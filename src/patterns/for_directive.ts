@@ -1,9 +1,11 @@
 // @ts-nocheck
-let "{{ element_array_name }}" = "{{ array_value }}", "{{ element_index }}" = 0;
+let "{{ element_array_name }}" = "{{ array_value }}";
+let "{{ element_index }}"_dup = 0;
 for (const "{{ element_name }}" of "{{ element_array_name }}") {
   // let n1, etc...;
   "{{ childs_declarations }}"
-  "{{ element_index }}" = "{{ element_array_name }}".indexOf("{{ element_name }}");
+  let "{{ element_index }}" = "{{ element_array_name }}".indexOf("{{ element_name }}");
+  "{{ element_index }}"_dup = "{{ element_index }}";
   // add missing elements
   if ("{{ element_index }}" > "{{ element_wrapper }}".children.length -1) {
     "{{ childs_assignments }}"
@@ -20,8 +22,8 @@ for (const "{{ element_name }}" of "{{ element_array_name }}") {
   }
 }
 // remove extra elements
-if ("{{ element_index }}" < "{{ element_wrapper }}".children.length -1) {
-  for (let "{{ removal_index }}" = "{{ element_wrapper }}".children.length -1; "{{ element_index }}" < "{{ removal_index }}"; "{{ removal_index }}"--) {
+if ("{{ element_index }}"_dup < "{{ element_wrapper }}".children.length -1) {
+  for (let "{{ removal_index }}" = "{{ element_wrapper }}".children.length -1; "{{ element_index }}"_dup < "{{ removal_index }}"; "{{ removal_index }}"--) {
     "{{ element_wrapper }}".children["{{ removal_index }}"].remove();
     delete "{{ wrapper_update_subscriber }}"["{{ removal_index }}"];
   }
