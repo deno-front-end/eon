@@ -3,7 +3,25 @@ import TodoListRow from './TodoListRow.tsx';
 import type { Todo } from './TodoListRow.tsx';
 import ThemeTodoList from './ThemeTodoList.ts';
 
-export default function(this: VMC) {
+export interface TodoListAppInterface {
+  ThemeTodoList: typeof ThemeTodoList;
+  list: Todo[];
+}
+
+export default function(this: TodoListAppInterface) {
+  this.ThemeTodoList = ThemeTodoList;
+  this.list = [
+    {
+      value: 'test',
+      active: true,
+      issues: [1, 2, 3]
+    },
+    {
+      value: 'test2',
+      active: false,
+      issues: [0],
+    },
+  ];
   return (<template>
     <style>{/*css*/`
       h1 {
@@ -56,29 +74,14 @@ export default function(this: VMC) {
     </div>
   </template>)
 }
-export class VMC {
-  ThemeTodoList = ThemeTodoList;
-  list: Todo[] = [
-    {
-      value: 'test',
-      active: true,
-      issues: [1, 2, 3]
-    },
-    {
-      value: 'test2',
-      active: false,
-      issues: [0],
-    },
-  ];
-  static connected(this: VMC) {
-    setInterval(() => {
-      this.ThemeTodoList.grey = 'red';
-      this.list.push({
-        active: Math.random() > 0.5,
-        value: 'test3',
-        issues: [],
-      })
-      // setTimeout(() => this.list.splice(0), 200);
-    }, 2000);
-  }
+export function connected(this: TodoListAppInterface) {
+  setInterval(() => {
+    this.ThemeTodoList.grey = 'red';
+    this.list.push({
+      active: Math.random() > 0.5,
+      value: 'test3',
+      issues: [],
+    })
+    // setTimeout(() => this.list.splice(0), 200);
+  }, 2000);
 }

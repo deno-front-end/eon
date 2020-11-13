@@ -1,4 +1,6 @@
-export default function(this: VMC) {
+export interface TodoListFormInterface { value: string }
+export default function(this: TodoListFormInterface) {
+  this.value = '';
   return (<template>
     <form>
       <input value={() => this.value}></input>
@@ -6,9 +8,6 @@ export default function(this: VMC) {
     </form>
   </template>)
 }
-export class VMC {
-  value = '';
-  static connected(this: VMC) {
-    this.value = 'placeholder';
-  }
+export function connected(this: TodoListFormInterface) {
+  this.value = 'placeholder';
 }

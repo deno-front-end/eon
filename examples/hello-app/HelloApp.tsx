@@ -1,5 +1,24 @@
-import AnotherComponent, { VMC as AnVMC } from "./AnotherComponent.tsx";
-export default function (this: VMC) {
+import AnotherComponent from "./AnotherComponent.tsx";
+export interface HelloAppInterface {
+  array: number[];
+  message: string;
+  newData: any;
+}
+export function connected(this: HelloAppInterface) {
+  let i = 0;
+  setInterval(() => {
+    this.newData.test.message = `${i} test deep reactivity`;
+    i++;
+  }, 50);
+}
+export default function (this: HelloAppInterface) {
+  this.array = [];
+  this.message = 'Hello world';
+  this.newData = {
+    test: {
+      message: 'string'
+    }
+  };
   return (<template>
     <style>{
       /*css*/`.container {
@@ -19,27 +38,4 @@ export default function (this: VMC) {
     </div>
     <AnotherComponent test={() => this.newData.test.message} />
   </template>)
-}
-
-
-export class VMC extends AnVMC {
-  public message: string = "Hello World";
-  public array: number[] = [0];
-  public newData = {
-    test: {
-      message: 'string'
-    }
-  };
-
-  static connected(this: VMC) {
-    let i = 0;
-    setInterval(() => {
-      this.newData.test.message = `${i} test deep reactivity`;
-      i++;
-    }, 50);
-  }
-
-  public switchText() {
-    this.message = 'test';
-  }
 }

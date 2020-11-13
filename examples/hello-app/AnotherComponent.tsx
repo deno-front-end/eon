@@ -1,20 +1,21 @@
+export interface AnotherComponentInterface {
+  message: string;
+  test: string;
+  props: AnProps;
+}
 // @ts-ignore
 export type AnProps = EonProps<{ test: string; }>;
-export default function (this: VMC, props: AnProps) {
+export function updated(this: AnotherComponentInterface) {
+  this.message = 'Im Updated';
+}
+export default function (this: AnotherComponentInterface, props: AnProps) {
+  this.message = 'Hello';
+  this.test = 'test';
+  this.props = props;
   return (<template>
     <style>{/*css*/`div { color: blue }`}</style>
     <div>
-      test of props {() => this.test}
+      test of props {() => this.props.test}
     </div>
   </template>)
-}
-export class VMC {
-  public message = 'Hello World overwritten';
-  public test: string = 'test';
-  static props(this: VMC, props: AnProps) {
-    this.test = props.test as string;
-  }
-  static updated(this: VMC) {
-    this.message = 'Im updated';
-  }
 }

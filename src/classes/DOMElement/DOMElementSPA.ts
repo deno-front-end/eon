@@ -68,22 +68,13 @@ export default class DOMElementSPA extends DOMElementObject {
     }
     if (this.isComponent && this.component) {
       /**
-       * this allows the props to be evaluated when the initialization is done
-       */
-      const directEvaluatedProps = this.children
-        .filter((d) => d.isBoundAttribute)
-        .map((domelement) => `${domelement.name}: ${domelement.uuid}(component),`)
-        .join('\n')
-      /**
        * if the element is a component
        * it should use as vars
        * one for the component element: document.createElement('my-component')
        * one for props function
        */
       return `${this.uuid} = crt('${this.component.dataUuidForSPA}');
-      ${this.uuid}_props = {
-        ${directEvaluatedProps}
-      };
+      ${this.uuid}_props = {};
       `;
     }
     if (this.isArrowIterationFunction) {

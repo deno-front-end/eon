@@ -5,8 +5,20 @@ export interface Todo {
   active: boolean;
   issues: number[];
 }
+export interface TodoListRowInterface {
+  ThemeTodoList: typeof ThemeTodoList;
+  todo: Todo;
+  props: Props;
+}
 export type Props = EonProps<{ todo: Todo }>;
-export default function(this: VMC, props: Props) {
+export default function(this: TodoListRowInterface, props: Props) {
+  this.ThemeTodoList = ThemeTodoList;
+  this.todo = {
+    value: 'default',
+    active: true,
+    issues: [],
+  };
+  this.props = props;
   return (<template>
     <style>{/*css*/`
       .container {
@@ -31,16 +43,4 @@ export default function(this: VMC, props: Props) {
       <slot name="issues"></slot>
     </div>
   </template>)
-}
-export class VMC {
-  ThemeTodoList = ThemeTodoList;
-  todo: Todo = {
-    value: 'default',
-    active: true,
-    issues: [],
-  };
-  static props(this: VMC, props: Props) {
-    this.todo.value = (props.todo as Todo).value;
-    this.todo.active = (props.todo as Todo).active;
-  }
 }

@@ -64,7 +64,7 @@ export default class DevBundler extends Utils {
   }
   protected static async buildScriptSPA(): Promise<string> {
     let app: string = `/** Eon application compiled */
-      import { reactive, crt, app, att, add } from '${new URL('../functions/runtime.ts', import.meta.url).pathname}';
+      import { reactive, crt, app, att, add, h, hf } from '${new URL('../functions/runtime.ts', import.meta.url).pathname}';
     `;
     const files: string[] = [];
     // first get all available components
@@ -83,17 +83,16 @@ export default class DevBundler extends Utils {
       .forEach((component: EonComponent, i: number) => {
       if (component.file && component.isImported) {
         const newPath = `${component.uuid}.ts`;
-        const vmcName = `VMC${i}______${i}`;
+        const vmcName = `EonComponent${i}______${i}`;
         // save the new string into the files used by Deno.bundle
         const file = this.createMirrorEsmFile(component, vmcName);
         const esmSandBoxPath = EonSandBox.addFile(newPath, file);
         files.push(esmSandBoxPath);
-        if (component.VMC) {
-          app += `\n/** Eon harmony import */\nimport { VMC as ${vmcName} } from '${component.sourcePath}';`;
-        }
+        app += `\n/** Eon harmony import */\nimport ${vmcName} from '${component.sourcePath}';`;
         if (file) {
           app += `\n${file}`;
         }
+        console.warn(file);
       }
     });
     const appSandBoxPath = EonSandBox.addFile(appPath, app);
@@ -108,7 +107,10 @@ export default class DevBundler extends Utils {
     files.forEach((file) => {
       Deno.removeSync(file);
     });
-    return emit;
+    return `
+    function h() {};
+    function hf() {};
+    ${emit}`;
   }
   /**
    * creates mirror esm files
@@ -120,7 +122,7 @@ export default class DevBundler extends Utils {
     return DevBundler.renderPattern(componentDeclartionPattern.replace(/\bcomponent_ctx\b/gi, `component_ctx_${vmc_name}`), {
       data: {
         vmc_name,
-        vmc_instantiate: `new ${vmc_name}()`,
+        vmc_instantiate: `new ${vmc_name}({ })`,
         uuid_component: component.dataUuidForSPA,
         element_vars: DOMElementRegistry.getVarsSPA(component),
         element_assignments: DOMElementRegistry.getAssignementsSPA(component),

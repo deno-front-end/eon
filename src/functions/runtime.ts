@@ -1,4 +1,6 @@
 // @ts-nocheck
+export function h() {}
+export function hf() {}
 /**
  * this files should export all the functions
  * that can be used in the runtime

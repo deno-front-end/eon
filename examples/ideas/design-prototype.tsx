@@ -1,4 +1,3 @@
-```tsx
 import TodoListRow, { Todo } from '../todo-list/TodoListRow.tsx';
 
 export interface DesignPrototypeProps { message: string }
@@ -29,4 +28,3 @@ export default function(this: DesignPrototype, props: DesignPrototypeProps) {
     }
   </template>)
 }
-```

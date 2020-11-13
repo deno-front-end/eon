@@ -27,7 +27,7 @@ customElement.define('[component-uuid]', class extends HTMLElement {
 # TODO: more documentations here
 
 ```js
-import { VMC } from '../[path_to_component].ts';
+import Component from '../[path_to_component].ts';
 
 function component_ctx() {
   // tmp is a template element
@@ -45,7 +45,7 @@ function component_ctx() {
   c5,
   c5_props_update,
   /* and then the component */
-  component = new VMC();
+  component = new Component();
 
   /* will assign all the nodes inside vars*/
   function init() {

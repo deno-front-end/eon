@@ -16,8 +16,6 @@ export interface EonComponentInterface {
   sourcePath?: string;
   /** the DOM tree of the component */
   template?: DOMElement;
-  /** component's VMC */
-  VMC?: EonModule['VMC'];
   /** returns the DOM tree of the component */
   templateFactory: EonModule['default'];
   /** if the component is the first component */
@@ -36,7 +34,6 @@ export default class EonComponent implements EonComponentInterface {
   sourcePath: EonComponentInterface['sourcePath'];
   sandBoxPath: EonComponentInterface['sandBoxPath'];
   template: EonComponentInterface['template'];
-  VMC: EonComponentInterface['VMC'];
   isRootComponent: EonComponentInterface['isRootComponent'] = false;
   isImported: EonComponentInterface['isImported'] = false;
   templateFactory: EonComponentInterface['templateFactory'];
@@ -46,7 +43,6 @@ export default class EonComponent implements EonComponentInterface {
       file,
       uuid,
       template,
-      VMC,
       templateFactory,
       name,
       imports,
@@ -54,7 +50,6 @@ export default class EonComponent implements EonComponentInterface {
     this.file = file;
     this.uuid = uuid;
     this.template = template;
-    this.VMC = VMC;
     this.name = name;
     this.templateFactory = templateFactory;
     if (this.uuid) {

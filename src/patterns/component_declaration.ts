@@ -70,7 +70,7 @@ function component_ctx() {
   }
 }
 customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
-  static VMC = "{{ vmc_name }}";
+  static VMC = {};
   constructor() {
     super();
     const { init, update, destroy, component, connected } = component_ctx();
