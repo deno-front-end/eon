@@ -16,6 +16,8 @@ export default class EonSandBox extends EonSandBoxFileSystem {
     const location = this.sandBoxLocation;
     if (!fs.existsSync(location)) {
       Deno.mkdirSync(location);
+    } else {
+      Deno.removeSync(location, { recursive: true });
     }
     const paths = fs.walkSync(this.currentLocation, {
       includeDirs: true,
