@@ -88,29 +88,26 @@ export default class DevBundler extends Utils {
         const file = this.createMirrorEsmFile(component, vmcName);
         const esmSandBoxPath = EonSandBox.addFile(newPath, file);
         files.push(esmSandBoxPath);
-        app += `\n/** Eon harmony import */\nimport ${vmcName} from '${component.sourcePath}';`;
+        app += `\n/** Eon harmony import */\nimport { default as ${vmcName} } from '${component.sourcePath}';`;
         if (file) {
           app += `\n${file}`;
         }
-        console.warn(file);
       }
     });
     const appSandBoxPath = EonSandBox.addFile(appPath, app);
     const [, emit] = await Deno.bundle(appSandBoxPath, undefined, {
       jsx: "react",
-      jsxFactory: "h",
+      jsxFactory: "this._h",
       // @ts-ignore
-      jsxFragmentFactory: "hf",
+      jsxFragmentFactory: "this._hf",
       sourceMap: false,
     });
     files.push(appSandBoxPath);
     files.forEach((file) => {
       Deno.removeSync(file);
     });
-    return `
-    function h() {};
-    function hf() {};
-    ${emit}`;
+    // cancel any direct evaluation
+    return emit.replace(/this\._(h|hf)/g, '1 || this._$1');
   }
   /**
    * creates mirror esm files

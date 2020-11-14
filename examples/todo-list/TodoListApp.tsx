@@ -82,6 +82,6 @@ export function connected(this: TodoListAppInterface) {
       value: 'test3',
       issues: [],
     })
-    // setTimeout(() => this.list.splice(0), 200);
+    setTimeout(() => this.list.splice(0), 200);
   }, 2000);
 }
