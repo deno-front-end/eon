@@ -1,8 +1,9 @@
 // @ts-nocheck
-function component_ctx() {
+function component_ctx(element_"{{ vmc_name }}") {
   "{{ element_vars /** let n1, n2; */ }}"
   // reactive function will be imported
   let component = reactive("{{ vmc_instantiate }}", update);
+  const "{{ props_name }}" = element_"{{ vmc_name }}".props;
   /**
    * all lifeCycle of the component
    */
@@ -70,10 +71,10 @@ function component_ctx() {
   }
 }
 customElements.define('"{{ uuid_component }}"', class extends HTMLElement {
-  static VMC = {};
   constructor() {
     super();
-    const { init, update, destroy, component, connected } = component_ctx();
+    this.props = reactive({}, () => this.update());
+    const { init, update, destroy, component, connected } = component_ctx(this);
     let template = init();
     // @ts-ignore
     this.component = component;

@@ -119,6 +119,7 @@ export default class DevBundler extends Utils {
     return DevBundler.renderPattern(componentDeclartionPattern.replace(/\bcomponent_ctx\b/gi, `component_ctx_${vmc_name}`), {
       data: {
         vmc_name,
+        props_name: 'props',
         vmc_instantiate: `new ${vmc_name}({ })`,
         uuid_component: component.dataUuidForSPA,
         element_vars: DOMElementRegistry.getVarsSPA(component),

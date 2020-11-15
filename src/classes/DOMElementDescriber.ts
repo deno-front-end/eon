@@ -86,4 +86,11 @@ export default class DOMElementDescriber extends Utils {
     }
     return null;
   }
+  static getParams(fn: any): null {
+    if (!fn) return null;
+    const func = fn.toString().trim();
+    // const ast = parse(func, DOMElementDescriber.swcOptions);
+    // console.warn(ast);
+    return null;
+  }
 }

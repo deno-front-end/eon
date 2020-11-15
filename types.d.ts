@@ -120,3 +120,4 @@ declare type EonProps<T> = { children?: any } & {
 declare type EonPassiveProps<T> = { children?: any } & {
   [P in keyof T]: T[P];
 }
+declare type Eon<T> = { $props: unknown, readonly $parent: unknown, } & T;

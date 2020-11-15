@@ -10,5 +10,9 @@ export interface EonModule {
    * all component should have a template element that provide the ImportMeta of the module
    */
   default: FunctionConstructor;
+  /**
+   * parameters of the default function
+   */
+  params: string[];
   [k: string]: unknown;
 }
