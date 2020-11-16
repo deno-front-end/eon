@@ -1,23 +1,45 @@
-import * as HelloApp2 from './HelloApp2.jsx';
-import * as HelloApp3 from './HelloApp2.jsx';
-import * as HelloApp4 from './HelloApp2.jsx';
-
-export const name = "AppHello";
-export default function(this: ViewModel): JSX.Element {
-  // what to do about all the things referenced here
-  // maybe it's a helper zone for SSR
-  // but what about SPA
-  // keep in mind, this function is just to do the dom tree
-  return (<>
-    <template>
-      <div class="container">{() => this.message}</div>
-    </template>
-    <style>
-      {`.container { color: red; }`}
-    </style>
-  </>
-  )
+import AnotherComponent, { VMC as AnVMC } from "./AnotherComponent.tsx";
+export default function (this: VMC) {
+  return (<template>
+    <style>{
+      /*css*/`.container {
+          color: red;
+        }
+      `}</style>
+    {() => this.array.length}
+    <div class="container">
+      {() => this.message}
+      {() => this.newData.test.message}
+      <span class="span">
+        {() => '> ' + Date.now()}
+      </span>
+      <span class={() => this.newData.test.message}>
+        test on reactive attributes
+      </span>
+    </div>
+    <AnotherComponent test={() => this.newData.test.message} />
+  </template>)
 }
-export class ViewModel {
-  public message = "Hello World";
+
+
+export class VMC extends AnVMC {
+  public message: string = "Hello World";
+  public array: number[] = [0];
+  public newData = {
+    test: {
+      message: 'string'
+    }
+  };
+
+  static connected(this: VMC) {
+    let i = 0;
+    setInterval(() => {
+      this.newData.test.message = `${i} test deep reactivity`;
+      i++;
+    }, 50);
+  }
+
+  public switchText() {
+    this.message = 'test';
+  }
 }

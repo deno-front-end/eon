@@ -2,6 +2,8 @@
   "compilerOptions": {
     "jsxFactory": "h",
     "jsxFragmentFactory": "hf",
-    "jsx": "react"
-  }
+    "jsx": "react",
+    "lib": ["esnext"],
+    "types": ["./types.d.ts"]
+  },
 }
