@@ -4,7 +4,6 @@ import type { ModuleGetterOptions } from './ModuleGetterOptions.ts';
 import { v4 } from '../../deps.ts';
 import { ModuleErrors } from './ModuleErrors.ts';
 import DOMElement from './DOMElement/DOMElement.ts';
-import DOMElementDescriber from './DOMElementDescriber.ts';
 
 export default abstract class ModuleResolver {
   static currentComponent: EonComponent | null = null;
@@ -17,7 +16,6 @@ export default abstract class ModuleResolver {
     if (!module.default || module.default && !(module.default instanceof Function)) {
       throw ModuleErrors.error(`${entrypoint}\n\t Export default is required for all component as a function`)
     }
-    const params = DOMElementDescriber.getParams(module.default);
     const component = new EonComponent({
       file: '',
       uuid: v4.generate(),

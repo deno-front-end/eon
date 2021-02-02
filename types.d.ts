@@ -1,8 +1,8 @@
 /** bind this part of the graph */
 declare type BoundValue = (() => string)
-  | (() => JSX.IntrinsicElements[])
-  | (() => JSX.Element[])
-  | ((currentValue: any, index: any, array?: any[]) => JSX.Element)
+  | (() => h.JSX.IntrinsicElements[])
+  | (() => h.JSX.Element[])
+  | ((currentValue: any, index: any, array?: any[]) => h.JSX.Element)
   | string
   | number
   | boolean
@@ -10,11 +10,11 @@ declare type BoundValue = (() => string)
   | null;
 
 // deno-lint-ignore no-namespace
-declare namespace JSX {
+declare namespace h.JSX {
   export interface IntrinsicElements {
-    style: JSX.StyleElement;
-    template: JSX.TemplateElement;
-    [k: string]: JSX.Element;
+    style: h.JSX.StyleElement;
+    template: h.JSX.TemplateElement;
+    [k: string]: h.JSX.Element;
   }
   interface ElementChildrenAttribute {
     children: unknown;
@@ -24,21 +24,21 @@ declare namespace JSX {
     [k: string]: unknown;
   }
   /** style elements should only accept strings as chlidren  */
-  export interface StyleElement extends Element {
+  export interface StyleElement extends h.JSX.Element {
     children: string | (() => string);
   }
   export interface ElementAttributesProperty {
     props: Object; // specify the property name to use
   }
-  export interface TemplateElement extends Element {
+  export interface TemplateElement extends h.JSX.Element {
     useVMC?: {}
     meta?: ImportMeta;
     name?: string;
   }
 }
 type Attributes = { [k: string]: unknown } | DOMEventsLVL2;
-declare function h(tagName: string, attributes: Attributes | null, ...children: unknown[]): JSX.Element;
-declare function hf(...children: unknown[]): JSX.Element;
+declare function h(tagName: string, attributes: Attributes | null, ...children: unknown[]): h.JSX.Element;
+declare function hf(...children: unknown[]): h.JSX.Element;
 type JSXFactory = Parameters<typeof h>;
 type JSXFragmentFactory = Parameters<typeof hf>;
 interface DOMEventsLVL2 {

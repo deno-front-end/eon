@@ -1,13 +1,9 @@
 export type Props = { name: string };
-export default function(this: Eon<{ message: string; }>, props: Props) {
-  this.message = 'Hello World';
-  return <template>
-		<style>{/*css*/` div { color: red; } `}</style>
-		<div>
-			{() => props
-				&& props.name
-				&& `Hello ${props.name}`
-					|| this.message}
-		</div>
+export default function(this: Eon<{ message: string; list: string[] }>, props: Props) {
+  define:
+    this.message = 'Hello World';
+    this.list = [];
+  return <template { ...{ for: this.list } }>
+    { this.message }
   </template>
 }

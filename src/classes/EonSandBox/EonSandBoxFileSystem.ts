@@ -2,6 +2,7 @@ import { path, fs, colors } from "../../../deps.ts";
 import { ModuleErrors } from "../ModuleErrors.ts";
 import Utils from "../Utils.ts";
 import EonComponentRegistry from '../EonComponentRegistry.ts';
+import DOMElementDescriber from '../DOMElementDescriber.ts';
 
 
 export interface EonSandBoxDocument {
@@ -46,10 +47,10 @@ export default class EonSandBoxFileSystem extends Utils {
   static async saveSandBoxedFile(opts: { path: string; sandBoxPath: string; importable: string }): Promise<void> {
     const { path: pathToFile, sandBoxPath, importable } = opts;
     const content = Deno.readTextFileSync(pathToFile);
-    const jsxFileContent = await this.getTranspiledFile({
+    const jsxFileContent = this.setReactivity(await this.getTranspiledFile({
       sandBoxPath,
       content,
-    });
+    }));
     // save the new file in the sandbox
     Deno.writeTextFileSync(sandBoxPath, jsxFileContent);
     this.mapFiles.set(pathToFile, {
@@ -143,6 +144,8 @@ export default class EonSandBoxFileSystem extends Utils {
    * type checking step for all components
    */
   static async typecheckSession(): Promise<void> {
+    const typesPath = new URL('./../../../types.d.ts', import.meta.url).pathname;
+    const types = Deno.readTextFileSync(typesPath);
     const { gray, green, white, red } = colors;
     let diagnostics: unknown[] = []
     let documents = Array.from(this.mapFiles.entries())
@@ -159,12 +162,16 @@ export default class EonSandBoxFileSystem extends Utils {
     for await( let document of documents) {
       if (document) {
         this.message(`${gray('Check')} ${green(document.sourcePath)}`);
-        const [diags] = await Deno.compile(document.sourcePath, undefined, {
+        const [diags] = await Deno.compile(document.sandBoxPath, {
+          [document.sandBoxPath]: `
+            ${types}
+            ${document.content}
+          `,
+        }, {
           jsxFactory: 'h',
           /** @ts-ignore */
           jsxFragmentFactory: 'hf',
           jsx: 'react',
-          types: [new URL('./../../../types.d.ts', import.meta.url).pathname],
           sourceMap: false,
         });
         //  TODO typecheck props usages
@@ -183,5 +190,9 @@ export default class EonSandBoxFileSystem extends Utils {
     // throws if defined
     ModuleErrors.checkDiagnostics(diagnostics as unknown[]);
     this.message(`${green('Success')} ${white('type checking passed with no errors')}`);
+  }
+  static setReactivity(file: string): string {
+    let result = DOMElementDescriber.makeJSXArgumentsReactive(file);
+    return result;
   }
 }

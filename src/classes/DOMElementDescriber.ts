@@ -86,11 +86,35 @@ export default class DOMElementDescriber extends Utils {
     }
     return null;
   }
-  static getParams(fn: any): null {
-    if (!fn) return null;
-    const func = `(${fn.toString().trim()})`;
-    const ast = parse(func, DOMElementDescriber.swcOptions);
-    console.warn(ast);
-    return null;
+  static makeJSXArgumentsReactive(file: any): string {
+    if (!file) return file;
+    let result = file;
+    const ast = parse(result, DOMElementDescriber.swcOptions);
+    const inputs: Object[] = [];
+    function recursiveWalk(obj: any) {
+      if (!inputs.includes(obj)) inputs.push(obj);
+      Object.values(obj)
+        .forEach((item) => {
+          if (Array.isArray(item)) {
+            item.forEach((item2) => {
+              recursiveWalk(item2);
+            })
+          } else if (item instanceof Object) {
+            recursiveWalk(item);
+          }
+        })
+    }
+    recursiveWalk(ast);
+    // @ts-ignore
+    const jsxFactoryCalls = inputs.filter((inp) => inp.type === "CallExpression" && inp.callee.value === "h");
+    // @ts-ignore
+    const keyValueProps = inputs.filter((inp) => inp.type === "KeyValueProperty");
+    // @ts-ignore
+    const labels = inputs.filter((inp) => inp.type === "LabeledStatement");
+    // @ts-ignore
+    console.warn(labels);
+    console.warn(jsxFactoryCalls);
+    console.warn(keyValueProps);
+    return result;
   }
 }

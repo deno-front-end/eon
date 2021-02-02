@@ -3,6 +3,7 @@
     "jsxFactory": "h",
     "jsxFragmentFactory": "hf",
     "jsx": "react",
+    "lib": ["esnext"],
     "types": ["./types.d.ts"]
   },
 }
